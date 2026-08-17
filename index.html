@@ -322,29 +322,6 @@
 </head>
 <body>
 
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div class="login-bolt">
-        <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M13 2L4.5 13.5H11L10 22L19.5 10H13L13 2Z" fill="#0C0C0C" stroke="#0C0C0C" stroke-width="1.5" stroke-linejoin="round"></path></svg>
-      </div>
-      <div>
-        <div class="login-title">Voltum</div>
-      </div>
-    </div>
-    <div class="login-sub">Ingresá para continuar</div>
-    <div class="login-tabs">
-      <button class="login-tab" onclick="selectLoginRole(&#39;socio&#39;)">Administrador</button>
-      <button class="login-tab active" onclick="selectLoginRole(&#39;empleado&#39;)">Colaborador</button>
-    </div>
-    <div id="login-pass-wrap">
-      <input class="login-input" type="password" id="login-pass" placeholder="Contraseña" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()">
-    </div>
-    <div class="login-err" id="login-err"></div>
-    <button class="login-btn" onclick="doLogin()">Ingresar</button>
-  </div>
-</div>
-
 
 <aside class="sidebar">
   <div class="brand">
@@ -1693,23 +1670,27 @@ function addExtraEmpleado(obraId){
 
 function renderObsLista(o, tipos, tipoColor){
   if(!o.observaciones || !o.observaciones.length) return '';
-  return [...o.observaciones].sort(function(a,b){return b.fecha.localeCompare(a.fecha);}).map(function(ob){
+  var sorted = [...o.observaciones].sort(function(a,b){return b.fecha.localeCompare(a.fecha);});
+  var html = '';
+  sorted.forEach(function(ob){
     var color = tipoColor[ob.tipo] || '#8A94A8';
     var tipoLabel = tipos[ob.tipo] || ob.tipo;
-    var autorSpan = ob.autor ? '<span style="font-size:11px;color:var(--ink-soft)">· '+ob.autor+'</span>' : '';
-    return '<div style="padding:14px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;border-left:3px solid '+color+'">'+
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'+
-        '<div style="display:flex;align-items:center;gap:8px">'+
-          '<span style="font-size:11px;font-weight:600;color:'+color+';text-transform:uppercase;letter-spacing:.05em">'+tipoLabel+'</span>'+
-          '<span style="font-size:11px;color:var(--ink-faint)">'+fmtFecha(ob.fecha)+'</span>'+
-          autorSpan+
-        '</div>'+
-        '<button onclick="delObservacion(''+o.id+'',''+ob.id+'')" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:0 4px" title="Eliminar">×</button>'+
-      '</div>'+
-      '<div style="font-size:13px;color:var(--ink);line-height:1.5;white-space:pre-wrap">'+ob.texto+'</div>'+
-    '</div>';
-  }).join('');
+    var autorSpan = ob.autor ? '<span style="font-size:11px;color:var(--ink-soft)">· ' + ob.autor + '</span>' : '';
+    html += '<div style="padding:14px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;border-left:3px solid ' + color + '">';
+    html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
+    html += '<div style="display:flex;align-items:center;gap:8px">';
+    html += '<span style="font-size:11px;font-weight:600;color:' + color + ';text-transform:uppercase">' + tipoLabel + '</span>';
+    html += '<span style="font-size:11px;color:var(--ink-faint)">' + fmtFecha(ob.fecha) + '</span>';
+    html += autorSpan;
+    html += '</div>';
+    html += '<button data-oid="' + o.id + '" data-obid="' + ob.id + '" onclick="delObservacion(this.dataset.oid,this.dataset.obid)" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:0 4px">×</button>';
+    html += '</div>';
+    html += '<div style="font-size:13px;color:var(--ink);line-height:1.5;white-space:pre-wrap">' + ob.texto + '</div>';
+    html += '</div>';
+  });
+  return html;
 }
+
 
 function renderObservaciones(c,o){
   o.observaciones??=[];
@@ -1780,7 +1761,7 @@ function delObservacion(obraId,obsId){
 
 
 /* ── AUTH / ROLES ── */
-var CURRENT_ROLE = null; // 'socio' | 'empleado'
+var CURRENT_ROLE = 'socio'; // 'socio' | 'empleado'
 var LOGIN_ROLE_SEL = 'socio';
 var PASS_SOCIO = 'Voltum2001';
 var PASS_EMPLEADO = 'Voltum2026';
