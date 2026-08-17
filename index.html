@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<!-- saved from url=(0043)https://grupovoltum.github.io/voltum-obras/ -->
+<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voltum · Central de Obras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --panel:#0C0C0C;
+    --panel-2:#1A1A1A;
+    --panel-line:#2A2A2A;
+    --bg:#F4F6FA;
+    --card:#FFFFFF;
+    --line:#E3E8F0;
+    --ink:#1A1F2E;
+    --ink-soft:#5A657C;
+    --ink-faint:#8A94A8;
+    --volt:#12E56B;
+    --volt-deep:#0EC65B;
+    --volt-ink:#04331b;
+    --live:#12C2A0;
+    --live-soft:#E4F8F3;
+    --danger:#E5484D;
+    --danger-soft:#FCE9E9;
+    --info:#3B82F6;
+    --shadow:0 1px 2px rgba(19,26,42,.05), 0 8px 24px rgba(19,26,42,.06);
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background:var(--bg);color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+    display:flex;min-height:100vh;
+  }
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#C9D2E0;border-radius:8px;border:2px solid var(--bg)}
+  ::-webkit-scrollbar-track{background:transparent}
+
+
+  /* ── LOGIN ── */
+  #login-screen{
+    position:fixed;inset:0;background:var(--panel);
+    display:flex;align-items:center;justify-content:center;
+    z-index:9999;flex-direction:column;gap:0;
+  }
+  #login-screen.hidden{display:none;}
+  .login-box{
+    background:var(--panel-2);border:1px solid var(--panel-line);
+    border-radius:18px;padding:36px 40px;width:340px;max-width:90vw;
+    display:flex;flex-direction:column;gap:20px;
+  }
+  .login-logo{display:flex;align-items:center;gap:12px;margin-bottom:4px;}
+  .login-bolt{width:40px;height:40px;border-radius:10px;background:var(--volt);display:grid;place-items:center;}
+  .login-title{font-size:22px;font-weight:700;color:#fff;font-family:'Space Grotesk',sans-serif;}
+  .login-sub{font-size:13px;color:var(--ink-soft);margin-top:-8px;}
+  .login-tabs{display:flex;gap:8px;}
+  .login-tab{
+    flex:1;padding:8px;border:1px solid var(--panel-line);border-radius:8px;
+    background:transparent;color:#8A94A8;cursor:pointer;font-size:13px;
+    font-family:'Inter',sans-serif;transition:all .15s;
+  }
+  .login-tab.active{background:var(--volt);color:var(--volt-ink);border-color:var(--volt);font-weight:600;}
+  .login-input{
+    width:100%;padding:10px 14px;border:1.5px solid var(--panel-line);
+    border-radius:10px;background:#111;color:#fff;font-size:14px;
+    font-family:'Inter',sans-serif;outline:none;transition:border-color .15s;
+  }
+  .login-input:focus{border-color:var(--volt);}
+  .login-input::placeholder{color:#555;}
+  .login-btn{
+    width:100%;padding:12px;border:none;border-radius:10px;
+    background:var(--volt);color:var(--volt-ink);font-size:15px;
+    font-weight:700;cursor:pointer;font-family:'Space Grotesk',sans-serif;
+    transition:opacity .15s;
+  }
+  .login-btn:hover{opacity:.88;}
+  .login-err{color:#E5484D;font-size:12px;text-align:center;min-height:16px;}
+  .role-badge{
+    display:inline-flex;align-items:center;gap:6px;
+    padding:4px 10px;border-radius:99px;font-size:12px;font-weight:600;
+    cursor:pointer;
+  }
+  .role-badge.socio{background:rgba(18,229,107,.15);color:var(--volt);}
+  .role-badge.empleado{background:rgba(59,130,246,.15);color:#3B82F6;}
+
+  /* ---------- SIDEBAR ---------- */
+  .sidebar{
+    width:230px;flex-shrink:0;background:var(--panel);color:#C7D0E0;
+    display:flex;flex-direction:column;position:sticky;top:0;height:100vh;
+    border-right:1px solid var(--panel-line);
+  }
+  .brand{padding:22px 20px 18px;display:flex;align-items:center;gap:11px;border-bottom:1px solid var(--panel-line)}
+  .brand .bolt{
+    width:34px;height:34px;border-radius:9px;background:var(--volt);
+    display:grid;place-items:center;flex-shrink:0;box-shadow:0 0 0 4px rgba(18,229,107,.15)}
+  .brand .bolt svg{width:19px;height:19px}
+  .brand .name{font-family:'Space Grotesk';font-weight:700;font-size:20px;color:var(--volt);letter-spacing:.5px;line-height:1;text-transform:uppercase}
+  .brand .badge-obras{display:inline-block;background:var(--volt);color:var(--volt-ink);font-family:'Space Grotesk';font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;padding:2px 7px;border-radius:5px;margin-top:6px}
+  .brand .sub{font-size:10.5px;color:var(--ink-faint);letter-spacing:1.5px;text-transform:uppercase;margin-top:3px}
+  nav{padding:14px 12px;display:flex;flex-direction:column;gap:2px;flex:1}
+  .nav-label{font-size:10px;letter-spacing:1.4px;text-transform:uppercase;color:#59657f;padding:12px 12px 6px}
+  .nav-btn{
+    display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;
+    background:none;border:none;color:#AEB9CE;font-family:inherit;font-size:14px;font-weight:500;
+    cursor:pointer;text-align:left;width:100%;transition:.14s;position:relative}
+  .nav-btn:hover{background:var(--panel-2);color:#fff}
+  .nav-btn.active{background:var(--panel-2);color:#fff}
+  .nav-btn.active::before{content:"";position:absolute;left:0;top:9px;bottom:9px;width:3px;border-radius:3px;background:var(--volt)}
+  .nav-btn svg{width:18px;height:18px;flex-shrink:0;opacity:.85}
+  .nav-btn .count{margin-left:auto;font-size:11px;font-family:'JetBrains Mono';background:#28324A;color:#9fb0cc;padding:1px 7px;border-radius:20px}
+  .sidebar-foot{padding:14px 16px;border-top:1px solid var(--panel-line);font-size:11px;color:#59657f;line-height:1.5}
+  .sidebar-foot b{color:#8595b2;font-weight:600}
+  .side-tool{flex:1;display:flex;align-items:center;justify-content:center;gap:5px;background:var(--panel-2);border:1px solid var(--panel-line);color:#AEB9CE;font-family:inherit;font-size:11.5px;font-weight:600;padding:7px 6px;border-radius:8px;cursor:pointer;transition:.14s}
+  .side-tool:hover{background:#28324A;color:#fff}
+  .side-tool svg{width:14px;height:14px}
+
+  /* ---------- MAIN ---------- */
+  main{flex:1;min-width:0;display:flex;flex-direction:column}
+  .topbar{
+    padding:20px 34px;display:flex;align-items:center;gap:16px;
+    border-bottom:1px solid var(--line);background:rgba(244,246,250,.85);
+    backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+  .topbar h1{font-family:'Space Grotesk';font-size:22px;font-weight:600;letter-spacing:-.2px}
+  .topbar .desc{font-size:13px;color:var(--ink-soft);margin-top:2px}
+  .topbar .spacer{flex:1}
+  .view{padding:26px 34px 60px;max-width:1180px;width:100%}
+
+  /* ---------- BUTTONS ---------- */
+  .btn{
+    font-family:inherit;font-size:13.5px;font-weight:600;border:none;border-radius:10px;
+    padding:10px 16px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:.14s;white-space:nowrap}
+  .btn svg{width:16px;height:16px}
+  .btn-primary{background:var(--volt);color:var(--volt-ink)}
+  .btn-primary:hover{background:var(--volt-deep);color:var(--volt-ink)}
+  .btn-ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:#C9D2E0;background:#fafbfd}
+  .btn-sm{padding:6px 11px;font-size:12.5px;border-radius:8px}
+  .btn-icon{background:none;border:none;cursor:pointer;color:var(--ink-faint);padding:5px;border-radius:7px;display:grid;place-items:center;transition:.14s}
+  .btn-icon:hover{background:#EEF1F6;color:var(--ink)}
+  .btn-icon svg{width:16px;height:16px}
+  .btn-icon.danger:hover{background:var(--danger-soft);color:var(--danger)}
+
+  /* ---------- CARDS / GRID ---------- */
+  .grid{display:grid;gap:16px}
+  .cards{grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .empty{
+    text-align:center;padding:64px 24px;color:var(--ink-soft);
+    border:2px dashed var(--line);border-radius:var(--radius);background:#fbfcfe}
+  .empty svg{width:42px;height:42px;color:#C9D2E0;margin-bottom:14px}
+  .empty h3{font-family:'Space Grotesk';font-size:17px;color:var(--ink);font-weight:600;margin-bottom:6px}
+  .empty p{font-size:13.5px;max-width:360px;margin:0 auto 18px;line-height:1.55}
+
+  /* ---------- CLIENTE CARD ---------- */
+  .cli-card{padding:18px}
+  .cli-top{display:flex;align-items:flex-start;gap:12px}
+  .cli-avatar{width:42px;height:42px;border-radius:11px;background:var(--panel);color:var(--volt);display:grid;place-items:center;font-family:'Space Grotesk';font-weight:700;font-size:16px;flex-shrink:0}
+  .cli-name{font-family:'Space Grotesk';font-weight:600;font-size:16px;line-height:1.2}
+  .tag{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;letter-spacing:.2px;margin-top:5px}
+  .tag-particular{background:#EEF2FF;color:#4F46E5}
+  .tag-constructora{background:#FEF3E2;color:#B45309}
+  .tag-arquitecto{background:var(--live-soft);color:#0E8C74}
+  .tag-comercio{background:#F3E8FF;color:#7E22CE}
+  .cli-meta{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:7px;font-size:13px;color:var(--ink-soft)}
+  .cli-meta div{display:flex;align-items:center;gap:8px}
+  .cli-meta svg{width:14px;height:14px;color:var(--ink-faint);flex-shrink:0}
+  .cli-foot{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .cli-obras-count{font-size:12.5px;color:var(--ink-soft)}
+  .cli-obras-count b{color:var(--ink);font-family:'JetBrains Mono'}
+  .card-hover-actions{display:flex;gap:2px;opacity:0;transition:.14s}
+  .card:hover .card-hover-actions{opacity:1}
+
+  /* ---------- OBRA CARD ---------- */
+  .obra-card{padding:0;overflow:hidden;display:flex;flex-direction:column}
+  .obra-head{padding:16px 18px;cursor:pointer;display:flex;align-items:flex-start;gap:12px}
+  .obra-head:hover{background:#fbfcfe}
+  .obra-code{font-family:'JetBrains Mono';font-size:11px;color:var(--ink-faint);font-weight:600}
+  .obra-name{font-family:'Space Grotesk';font-weight:600;font-size:15.5px;line-height:1.25;margin-top:2px}
+  .obra-cli{font-size:12.5px;color:var(--ink-soft);margin-top:4px;display:flex;align-items:center;gap:6px}
+  .estado{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;letter-spacing:.3px;white-space:nowrap;flex-shrink:0}
+  .estado.presupuesto{background:#EEF1F6;color:#5A657C}
+  .estado.confirmada{background:#E0EDFF;color:#2563EB}
+  .estado.ejecucion{background:var(--live-soft);color:#0E8C74}
+  .estado.pausada{background:#FEF3E2;color:#B45309}
+  .estado.finalizada{background:#F0F0F4;color:#6B7280}
+  .obra-stats{display:flex;border-top:1px solid var(--line);background:#fbfcfe}
+  .obra-stat{flex:1;padding:10px 12px;text-align:center;border-right:1px solid var(--line)}
+  .obra-stat:last-child{border-right:none}
+  .obra-stat .n{font-family:'JetBrains Mono';font-weight:600;font-size:16px;line-height:1}
+  .obra-stat .l{font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint);margin-top:4px}
+  .obra-stat .n.alert{color:var(--danger)}
+  .obra-stat .n.money{color:var(--live)}
+
+  /* ---------- MODAL ---------- */
+  .overlay{position:fixed;inset:0;background:rgba(19,26,42,.5);backdrop-filter:blur(3px);z-index:100;display:none;align-items:flex-start;justify-content:center;padding:40px 20px;overflow-y:auto}
+  .overlay.open{display:flex}
+  .modal{background:var(--card);border-radius:18px;width:100%;max-width:520px;box-shadow:0 24px 60px rgba(19,26,42,.28);animation:pop .18s ease}
+  .modal.wide{max-width:820px}
+  @keyframes pop{from{transform:translateY(12px) scale(.98);opacity:0}to{transform:none;opacity:1}}
+  .modal-head{padding:20px 24px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between}
+  .modal-head h2{font-family:'Space Grotesk';font-size:18px;font-weight:600}
+  .modal-head .sub{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .modal-body{padding:22px 24px;max-height:66vh;overflow-y:auto}
+  .modal-foot{padding:16px 24px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:10px}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:6px}
+  .field label .opt{color:var(--ink-faint);font-weight:400}
+  input,select,textarea{
+    width:100%;font-family:inherit;font-size:14px;color:var(--ink);
+    border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;transition:.14s}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--volt);box-shadow:0 0 0 3px rgba(18,229,107,.18)}
+  textarea{resize:vertical;min-height:70px}
+  .field-row{display:flex;gap:12px}
+  .field-row .field{flex:1}
+  .chip-select{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{padding:7px 13px;border:1px solid var(--line);border-radius:20px;font-size:13px;font-weight:500;cursor:pointer;transition:.14s;user-select:none}
+  .chip:hover{border-color:#C9D2E0}
+  .chip.on{background:var(--panel);color:#fff;border-color:var(--panel)}
+
+  /* ---------- OBRA DETAIL ---------- */
+  .detail-tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);padding:0 24px;margin-top:-2px}
+  .detail-tab{padding:12px 14px;background:none;border:none;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;position:relative;display:flex;align-items:center;gap:7px}
+  .detail-tab:hover{color:var(--ink)}
+  .detail-tab.active{color:var(--ink)}
+  .detail-tab.active::after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:2.5px;background:var(--volt);border-radius:3px}
+  .detail-tab .badge{font-family:'JetBrains Mono';font-size:10.5px;background:#EEF1F6;color:var(--ink-soft);padding:0 6px;border-radius:20px;min-width:18px;text-align:center}
+  .detail-tab .badge.alert{background:var(--danger-soft);color:var(--danger)}
+
+  .list-item{display:flex;align-items:center;gap:12px;padding:11px 12px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px;background:#fff}
+  .list-item:hover{border-color:#D8DEE9}
+  .check{width:20px;height:20px;border-radius:6px;border:2px solid #CBD3E0;cursor:pointer;flex-shrink:0;display:grid;place-items:center;transition:.14s}
+  .check.done{background:var(--live);border-color:var(--live)}
+  .check svg{width:12px;height:12px;color:#fff;opacity:0}
+  .check.done svg{opacity:1}
+  .li-text{flex:1;font-size:14px}
+  .li-text.done{text-decoration:line-through;color:var(--ink-faint)}
+  .li-sub{font-size:12px;color:var(--ink-soft)}
+  .mat-state{font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px}
+  .mat-falta{background:var(--danger-soft);color:var(--danger)}
+  .mat-pedido{background:#FEF3E2;color:#B45309}
+  .mat-ok{background:var(--live-soft);color:#0E8C74}
+  .quick-add{display:flex;gap:8px;margin-top:12px}
+  .quick-add input{flex:1}
+  .plano-item{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:11px;margin-bottom:8px}
+  .plano-ico{width:38px;height:38px;border-radius:9px;background:#EEF1F6;display:grid;place-items:center;flex-shrink:0;color:var(--info)}
+  .plano-ico svg{width:18px;height:18px}
+  .plano-item a{color:var(--info);font-weight:600;font-size:14px;text-decoration:none}
+  .plano-item a:hover{text-decoration:underline}
+  .extra-amount{font-family:'JetBrains Mono';font-weight:600;font-size:14px}
+  .section-sum{display:flex;align-items:center;justify-content:space-between;padding:13px 16px;background:var(--panel);color:#fff;border-radius:11px;margin-bottom:14px}
+  .section-sum .lbl{font-size:12.5px;color:#AEB9CE}
+  .section-sum .val{font-family:'JetBrains Mono';font-weight:600;font-size:17px;color:var(--volt)}
+
+  /* ---------- CALENDAR ---------- */
+  .cal-nav{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+  .cal-nav h2{font-family:'Space Grotesk';font-size:17px;font-weight:600;min-width:230px;text-transform:capitalize}
+  .week{display:grid;grid-template-columns:repeat(var(--cols,7),minmax(0,1fr));gap:10px}
+  .day{background:var(--card);border:1px solid var(--line);border-radius:12px;min-height:180px;display:flex;flex-direction:column;overflow:hidden}
+  .day.today{border-color:var(--volt);box-shadow:0 0 0 2px rgba(18,229,107,.22)}
+  .day.weekend{background:#fbfcfe}
+  .day-head{padding:9px 11px;border-bottom:1px solid var(--line);display:flex;align-items:baseline;justify-content:space-between}
+  .day-name{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--ink-faint)}
+  .day-num{font-family:'Space Grotesk';font-weight:700;font-size:16px}
+  .day.today .day-num{color:var(--volt-deep)}
+  .day-body{padding:8px;flex:1;display:flex;flex-direction:column;gap:6px}
+  .day-add{margin:0 8px 8px;padding:7px;border:1px dashed var(--line);border-radius:8px;background:none;color:var(--ink-faint);font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;transition:.14s}
+  .day-add:hover{border-color:var(--volt);color:var(--volt-deep);background:#effdf5}
+  .day-add svg{width:13px;height:13px}
+  .assign{background:#fbfcfe;border:1px solid var(--line);border-left:3px solid var(--volt);border-radius:7px;padding:7px 8px;cursor:pointer;transition:.14s}
+  .assign:hover{background:#fff;box-shadow:var(--shadow)}
+  .assign .a-obra{font-size:12px;font-weight:600;line-height:1.2}
+  .assign .a-task{font-size:11px;color:var(--ink-soft);margin-top:2px}
+  .assign .a-team{display:flex;gap:3px;margin-top:6px;flex-wrap:wrap}
+  .a-dot{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;font-family:'Space Grotesk'}
+
+  /* team member colors assigned by index */
+  .team-legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+  .team-pill{display:flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:20px;padding:5px 12px 5px 6px;font-size:13px;font-weight:500;cursor:grab;user-select:none;transition:.12s}
+  .team-pill:hover{border-color:#C9D2E0}
+  .team-pill:active{cursor:grabbing}
+  .team-pill.armed{background:var(--panel);color:#fff;border-color:var(--panel);box-shadow:0 0 0 3px rgba(18,229,107,.3)}
+  .assign.drop-hover{outline:2px dashed var(--volt);outline-offset:1px;background:#effdf5}
+  body.dragging .assign{outline:1px dashed var(--line)}
+  body.dragging .assign *{pointer-events:none}
+  .cal-hint{font-size:12.5px;color:var(--ink-faint);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+  .cal-hint svg{width:15px;height:15px;flex-shrink:0}
+  .arm-banner{display:flex;align-items:center;gap:8px;background:#effdf5;border:1px solid var(--volt);border-radius:10px;padding:9px 14px;font-size:13px;color:var(--ink);margin-bottom:14px}
+  .arm-banner button{margin-left:auto;background:var(--volt);border:none;color:var(--volt-ink);font-weight:600;font-family:inherit;font-size:12.5px;padding:5px 13px;border-radius:8px;cursor:pointer}
+  .arm-banner button:hover{background:var(--volt-deep)}
+
+  /* ---------- EQUIPO ---------- */
+  .eq-card{padding:18px;display:flex;align-items:center;gap:14px}
+  .eq-avatar{width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-family:'Space Grotesk';font-weight:700;font-size:17px;color:#fff;flex-shrink:0}
+  .eq-name{font-family:'Space Grotesk';font-weight:600;font-size:15.5px}
+  .eq-rol{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--panel);color:#fff;padding:12px 20px;border-radius:11px;font-size:13.5px;font-weight:500;box-shadow:0 12px 30px rgba(0,0,0,.25);opacity:0;transition:.24s;z-index:200;display:flex;align-items:center;gap:9px}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast svg{width:16px;height:16px;color:var(--volt)}
+
+  .row-actions{display:flex;gap:2px;margin-left:auto}
+  .inline-empty{font-size:13px;color:var(--ink-faint);text-align:center;padding:22px;font-style:italic}
+
+  @media(max-width:920px){
+    .sidebar{width:64px}
+    .brand .name,.brand .sub,.nav-label,.nav-btn span,.nav-btn .count,.sidebar-foot{display:none}
+    .nav-btn{justify-content:center}
+    .week{grid-template-columns:1fr;}
+    .day{min-height:auto}
+  }
+  @media(max-width:640px){
+    .view,.topbar{padding-left:18px;padding-right:18px}
+    .field-row{flex-direction:column;gap:0}
+  }
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="login-bolt">
+        <svg viewBox="0 0 24 24" fill="none" width="22" height="22"><path d="M13 2L4.5 13.5H11L10 22L19.5 10H13L13 2Z" fill="#0C0C0C" stroke="#0C0C0C" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+      </div>
+      <div>
+        <div class="login-title">Voltum</div>
+      </div>
+    </div>
+    <div class="login-sub">Ingresá para continuar</div>
+    <div class="login-tabs">
+      <button class="login-tab" onclick="selectLoginRole(&#39;socio&#39;)">Administrador</button>
+      <button class="login-tab active" onclick="selectLoginRole(&#39;empleado&#39;)">Colaborador</button>
+    </div>
+    <div id="login-pass-wrap">
+      <input class="login-input" type="password" id="login-pass" placeholder="Contraseña" onkeydown="if(event.key===&#39;Enter&#39;)doLogin()">
+    </div>
+    <div class="login-err" id="login-err"></div>
+    <button class="login-btn" onclick="doLogin()">Ingresar</button>
+  </div>
+</div>
+
+
+<aside class="sidebar">
+  <div class="brand">
+    <div class="bolt">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M13 2L4.5 13.5H11L10 22L19.5 10H13L13 2Z" fill="#0C0C0C" stroke="#0C0C0C" stroke-width="1.5" stroke-linejoin="round"></path></svg>
+    </div>
+    <div>
+      <div class="name">Voltum</div>
+      <span class="badge-obras">Obras</span>
+    </div>
+  </div><div id="role-badge" class="role-badge empleado" title="Cerrar sesión" style="margin: 0px 16px 12px; display: flex;">● Colaborador</div>
+  <nav>
+    <div class="nav-label">Operación</div>
+    <button class="nav-btn active" data-view="obras">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"></path></svg>
+      <span>Obras</span><span class="count" id="cnt-obras">14</span>
+    </button>
+    <button class="nav-btn" data-view="clientes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Clientes</span><span class="count" id="cnt-clientes">12</span>
+    </button>
+    <button class="nav-btn" data-view="calendario">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"></rect><path d="M16 2v4M8 2v4M3 10h18"></path></svg>
+      <span>Calendario</span>
+    </button>
+    <div class="nav-label">Equipo</div>
+    <button class="nav-btn" data-view="equipo" style="display: none;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+      <span>Equipo</span><span class="count" id="cnt-equipo">9</span>
+    </button>
+  </nav>
+  <div class="sidebar-foot">
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="side-tool" onclick="exportData()" title="Descargar copia de todos tus datos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"></path></svg>Backup</button>
+      <button class="side-tool" onclick="document.getElementById(&#39;import-file&#39;).click()" title="Restaurar desde un backup">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"></path></svg>Restaurar</button>
+      <input type="file" id="import-file" accept=".json" style="display:none" onchange="importData(this)">
+    </div>
+    <div id="cloud-status" style="display:flex;align-items:center;gap:7px;margin-bottom:12px;font-size:11px"><span style="width:8px;height:8px;border-radius:50%;background:var(--live);box-shadow:0 0 0 3px rgba(18,194,160,.2)"></span><span style="color:#8fb8ad">Nube conectada · sincroniza</span></div>
+    <b>Grupo Voltum</b><br>Instalaciones y domótica<br>Córdoba, AR
+  </div>
+</aside>
+
+<main>
+  <div class="topbar">
+    <div>
+      <h1 id="view-title">Obras</h1>
+      <div class="desc" id="view-desc">Todas las obras activas y su avance</div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn btn-primary" id="main-action">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 5v14M5 12h14"></path></svg>
+      <span id="main-action-label">Nueva obra</span>
+    </button>
+  </div>
+  <div class="view" id="view"><div class="grid cards"><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;tdzbttm&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-001</div>
+          <div class="obra-name">Costas 2 Manantiales</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Eidos Construcciones</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n alert">13</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n alert">1</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n money">$55.000</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;x02jcmu&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-002</div>
+          <div class="obra-name">Costas 1 Manantiales</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Eidos Construcciones</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;5xas0j3&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-003</div>
+          <div class="obra-name">Docta 94/27</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Arq. Bruno Fiolone</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n alert">3</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;uq763ti&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-004</div>
+          <div class="obra-name">Vischi La luisita</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Arq. Bruno Fiolone</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n alert">7</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;tcs5z4m&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-005</div>
+          <div class="obra-name">Abras de manantiales</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Arq. Bruno Fiolone</div>
+        </div>
+        <span class="estado confirmada">Confirmada</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n alert">2</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;nm49lql&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-006</div>
+          <div class="obra-name">La luisita duplex 2 y 3</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Sandro Cepollino</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n alert">3</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;yfwduxy&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-007</div>
+          <div class="obra-name">Lote 27 miradores</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>P4 construcciones</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;8vnzwku&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-008</div>
+          <div class="obra-name">Lote 8 san ignacio</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>P4 construcciones</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;f54xenw&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-009</div>
+          <div class="obra-name">Lote 24 Miradores 2</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>P4 construcciones</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n alert">2</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;nmok19l&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-010</div>
+          <div class="obra-name">Lote 19 San Ignacio</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>P4 construcciones</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n alert">5</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n money">$1.020.000</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;g02lasa&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-011</div>
+          <div class="obra-name">Nacho Bianco</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Wellnes Gym</div>
+        </div>
+        <span class="estado ejecucion">En ejecución</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n alert">1</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;d05xl5v&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-012</div>
+          <div class="obra-name">Cargador vehiculo electrico</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Sofia Loza</div>
+        </div>
+        <span class="estado confirmada">Confirmada</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;7fxacmr&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-013</div>
+          <div class="obra-name">Franco Longhi Cañuelas</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Eidos Construcciones</div>
+        </div>
+        <span class="estado confirmada">Confirmada</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div><div class="card obra-card">
+      <div class="obra-head" onclick="openObra(&#39;0j8wuhi&#39;)">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">OBR-014</div>
+          <div class="obra-name">Diego Scaraffia Cañuelas</div>
+          <div class="obra-cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>Diego scaraffia</div>
+        </div>
+        <span class="estado confirmada">Confirmada</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ">0</div><div class="l">Faltantes</div></div>
+        <div class="obra-stat"><div class="n ">—</div><div class="l">Extras s/cobrar</div></div>
+      </div>
+    </div></div></div>
+</main>
+
+<div class="overlay" id="overlay"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============================================================
+   VOLTUM · CENTRAL DE OBRAS
+   Datos persistentes en window.storage (clave única voltum:data)
+   ============================================================ */
+
+const STORAGE_KEY = 'voltum:data';
+const TEAM_COLORS = ['#3B82F6','#12C2A0','#8B5CF6','#F59E0B','#EC4899','#0EA5E9','#EF4444','#14B8A6','#6366F1','#F97316'];
+
+/* ============================================================
+   CONFIGURACIÓN DE LA NUBE (Supabase)
+   Pegá acá los dos valores de tu proyecto Supabase para que
+   los datos se sincronicen entre dispositivos y el equipo.
+   Si los dejás vacíos, la app guarda solo en este dispositivo.
+   ============================================================ */
+const SUPABASE_URL = 'https://nqnchfxajzuvejsrzjzn.supabase.co';   // proyecto Voltum
+const SUPABASE_KEY = 'sb_publishable_OfAlohikq1LvT3LomwNXkg_2iYlG8m9';   // clave pública (publishable)
+
+const CLOUD_CONFIGURED = !!(SUPABASE_URL && SUPABASE_KEY && window.supabase);
+let _sb = CLOUD_CONFIGURED ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+
+/* Capa de almacenamiento con prioridad:
+   1) Supabase si cargaste las claves (sincroniza entre dispositivos)
+   2) el almacenamiento de Claude si la abrís acá dentro (mantiene tus datos actuales)
+   3) localStorage si la alojás como web propia sin nube todavía */
+const cloudStore = {
+  async get(key){
+    const {data,error}=await _sb.from('voltum_kv').select('value').eq('key',key).maybeSingle();
+    if(error) throw error;
+    return data ? {value:data.value} : null;
+  },
+  async set(key,value){
+    const {error}=await _sb.from('voltum_kv').upsert({key,value,updated_at:new Date().toISOString()});
+    if(error) throw error; return {value};
+  },
+  async delete(key){
+    const {error}=await _sb.from('voltum_kv').delete().eq('key',key);
+    if(error) throw error; return {deleted:true};
+  },
+};
+const localStore = {
+  async get(key){ const v=localStorage.getItem(key); return v==null?null:{value:v}; },
+  async set(key,value){ localStorage.setItem(key,value); return {value}; },
+  async delete(key){ localStorage.removeItem(key); return {deleted:true}; },
+};
+/* Prioridad de almacenamiento:
+   - Acá dentro de Claude existe window.storage → lo usamos (tiene tus datos y no
+     depende de servidores externos, que este entorno bloquea).
+   - Alojada como web propia (GitHub Pages, Netlify) NO existe window.storage →
+     entonces usa Supabase y sincroniza entre dispositivos. */
+const store = window.storage ? window.storage : (CLOUD_CONFIGURED ? cloudStore : localStore);
+const USING_CLOUD = (store === cloudStore);
+
+let DB = { clientes:[], obras:[], equipo:[], calendario:[] };
+let currentView = 'obras';
+let weekOffset = 0;
+let openObraId = null;
+let openObraTab = 'pendientes';
+let _quickObraCallback = null;
+let _quickClienteCallback = null;
+let _dragMemberId = null;
+let _armedMember = null;
+let _showPast = false;
+let _migrationRaw = null;
+let _migrationData = null;
+
+const $ = s => document.querySelector(s);
+const uid = () => Math.random().toString(36).slice(2,9);
+const esc = s => (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const money = n => '$' + (Number(n)||0).toLocaleString('es-AR');
+const initials = name => (name||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+/* ---------- archivos ---------- */
+const MAX_FILE = 3.6 * 1024 * 1024; // ~límite real de window.storage (5MB tras base64)
+let _pendingFiles = [];
+const fmtSize = b => b<1024 ? b+' B' : b<1048576 ? Math.round(b/1024)+' KB' : (b/1048576).toFixed(1)+' MB';
+function readFileAsDataURL(file){
+  return new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>rej(fr.error);fr.readAsDataURL(file);});
+}
+function dataURLtoBlob(dataURL){
+  const [head,b64]=dataURL.split(',');
+  const mime=(head.match(/:(.*?);/)||[])[1]||'application/octet-stream';
+  const bin=atob(b64);const arr=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);
+  return new Blob([arr],{type:mime});
+}
+async function openFile(fileId){
+  try{
+    const r=await store.get('voltum:file:'+fileId);
+    if(!r||!r.value){ toast('No se encontró el archivo'); return; }
+    const url=URL.createObjectURL(dataURLtoBlob(r.value));
+    window.open(url,'_blank');
+    setTimeout(()=>URL.revokeObjectURL(url),60000);
+  }catch(e){ toast('No se pudo abrir el archivo'); }
+}
+
+/* ---------- persistence ---------- */
+let _dirty=false;         // hay cambios locales sin confirmar en la nube
+let _lastRaw=null;         // último JSON crudo cargado (para detectar cambios remotos)
+async function load(){
+  try{
+    const r = await store.get(STORAGE_KEY);
+    if(r && r.value){ DB = JSON.parse(r.value); _lastRaw=r.value; }
+  }catch(e){ /* primera vez: no hay datos aún */ }
+  DB.clientes ??= []; DB.obras ??= []; DB.equipo ??= []; DB.calendario ??= []; DB.calendario_info ??= [];
+}
+let saveTimer=null;
+async function save(){
+  _dirty=true;
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(async()=>{
+    try{ const raw=JSON.stringify(DB); await store.set(STORAGE_KEY, raw); _lastRaw=raw; _dirty=false; }
+    catch(e){ toast('No se pudo guardar. Revisá tu conexión.'); }
+  },150);
+}
+/* Recargar desde la nube (para ver cambios de otros dispositivos) */
+async function reloadFromCloud(){
+  if(!USING_CLOUD) return;
+  if(_dirty || saveTimer) return;                 // no pisar cambios propios sin guardar
+  if($('#overlay').classList.contains('open')) return; // no interrumpir una edición
+  if(document.body.classList.contains('dragging')) return;
+  try{
+    const r=await store.get(STORAGE_KEY);
+    if(r && r.value && r.value!==_lastRaw){
+      DB=JSON.parse(r.value); _lastRaw=r.value;
+      DB.clientes??=[];DB.obras??=[];DB.equipo??=[];DB.calendario??=[];
+      render();
+    }
+  }catch(e){ /* silencioso: reintenta en el próximo ciclo */ }
+}
+
+/* ---------- toast ---------- */
+function toast(msg){
+  const t=$('#toast');
+  t.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6L9 17l-5-5"/></svg>${esc(msg)}`;
+  t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+/* ---------- modal ---------- */
+function modal(html, wide){
+  const o=$('#overlay');
+  o.innerHTML=`<div class="modal${wide?' wide':''}">${html}</div>`;
+  o.classList.add('open');
+  o.onclick=e=>{ if(e.target===o) closeModal(); };
+}
+function closeModal(){ $('#overlay').classList.remove('open'); $('#overlay').innerHTML=''; }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+/* helpers */
+function clienteName(id){ const c=DB.clientes.find(c=>c.id===id); return c?c.nombre:'—'; }
+function teamColor(id){ const i=DB.equipo.findIndex(m=>m.id===id); return TEAM_COLORS[i%TEAM_COLORS.length]; }
+function obraNombre(id){ const o=DB.obras.find(o=>o.id===id); return o?o.nombre:'—'; }
+function obraCode(o){ return 'OBR-'+String(DB.obras.indexOf(o)+1).padStart(3,'0'); }
+
+/* ============================================================
+   RENDER ROUTER
+   ============================================================ */
+function refreshCounts(){
+  $('#cnt-obras').textContent=DB.obras.length;
+  $('#cnt-clientes').textContent=DB.clientes.length;
+  $('#cnt-equipo').textContent=DB.equipo.length;
+}
+const VIEWS={
+  obras:{title:'Obras',desc:'Todas las obras activas y su avance',action:'Nueva obra'},
+  clientes:{title:'Clientes',desc:'Constructoras, arquitectos y particulares',action:'Nuevo cliente'},
+  calendario:{title:'Calendario',desc:'Planificá qué día se trabaja en cada obra y quién va',action:'Programar día'},
+  equipo:{title:'Equipo',desc:'Las personas de Voltum y sus roles',action:'Sumar persona'},
+};
+function setView(v){
+  currentView=v; openObraId=null;
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  $('#view-title').textContent=VIEWS[v].title;
+  $('#view-desc').textContent=VIEWS[v].desc;
+  $('#main-action-label').textContent=VIEWS[v].action;
+  const _sb=document.getElementById('main-action');
+  if(_sb) _sb.style.display=(!isSocio()&&(v==='obras'||v==='clientes'))?'none':'';
+  openObraTab = isSocio() ? 'pendientes' : 'extras';
+  render();
+  paintCloudStatus();
+}
+function render(){
+  refreshCounts();
+  const el=$('#view');
+  if(openObraId){ renderObraDetail(el); return; }
+  if(currentView==='obras') renderObras(el);
+  else if(currentView==='clientes') renderClientes(el);
+  else if(currentView==='calendario') renderCalendario(el);
+  else if(currentView==='equipo') renderEquipo(el);
+}
+
+/* ============================================================
+   CLIENTES
+   ============================================================ */
+const TIPOS=[['Constructora','tag-constructora'],['Arquitecto','tag-arquitecto'],['Particular','tag-particular'],['Comercio','tag-comercio']];
+function tipoClass(t){ const f=TIPOS.find(x=>x[0]===t); return f?f[1]:'tag-particular'; }
+
+function renderClientes(el){
+  if(!DB.clientes.length){
+    el.innerHTML=emptyState('clientes','Todavía no hay clientes','Cargá las constructoras, arquitectos o particulares con los que trabajás. Después vas a poder colgar sus obras de cada uno.','Cargar primer cliente','openClienteForm');
+    return;
+  }
+  el.innerHTML=`<div class="grid cards">${DB.clientes.map(c=>{
+    const nObras=DB.obras.filter(o=>o.clienteId===c.id).length;
+    return `<div class="card cli-card">
+      <div class="cli-top">
+        <div class="cli-avatar">${esc(initials(c.nombre))}</div>
+        <div style="flex:1;min-width:0">
+          <div class="cli-name">${esc(c.nombre)}</div>
+          <span class="tag ${tipoClass(c.tipo)}">${esc(c.tipo)}</span>
+        </div>
+        <div class="card-hover-actions">
+          ${isSocio()?`<button class="btn-icon" onclick="openClienteForm('${c.id}')" title="Editar">${ICO.edit}</button>`:''}
+          <button class="btn-icon danger" onclick="delCliente('${c.id}')" title="Borrar">${ICO.trash}</button>
+        </div>
+      </div>
+      ${(c.contacto||c.tel)?`<div class="cli-meta">
+        ${c.contacto?`<div>${ICO.user}${esc(c.contacto)}</div>`:''}
+        ${c.tel?`<div>${ICO.phone}${esc(c.tel)}</div>`:''}
+      </div>`:''}
+      <div class="cli-foot">
+        <span class="cli-obras-count"><b>${nObras}</b> obra${nObras!==1?'s':''}</span>
+        <button class="btn btn-ghost btn-sm" onclick="setViewObrasDe('${c.id}')">Ver obras</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+function openClienteForm(id){
+  const c=id?DB.clientes.find(x=>x.id===id):{tipo:'Constructora'};
+  modal(`
+    <div class="modal-head"><div><h2>${id?'Editar cliente':'Nuevo cliente'}</h2></div>
+      <button class="btn-icon" onclick="closeModal()">${ICO.x}</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nombre del cliente</label>
+        <input id="f-nombre" value="${esc(c.nombre||'')}" placeholder="Ej: Constructora del Sur"></div>
+      <div class="field"><label>Tipo de cliente</label>
+        <div class="chip-select" id="f-tipo">${TIPOS.map(t=>`<div class="chip ${c.tipo===t[0]?'on':''}" data-v="${t[0]}">${t[0]}</div>`).join('')}</div></div>
+      <div class="field-row">
+        <div class="field"><label>Contacto <span class="opt">(persona)</span></label>
+          <input id="f-contacto" value="${esc(c.contacto||'')}" placeholder="Ej: Arq. Martínez"></div>
+        <div class="field"><label>Teléfono <span class="opt">(opcional)</span></label>
+          <input id="f-tel" value="${esc(c.tel||'')}" placeholder="351..."></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveCliente('${id||''}')">${id?'Guardar':'Crear cliente'}</button>
+    </div>`);
+  chipSelect('f-tipo');
+}
+function saveCliente(id){
+  const nombre=$('#f-nombre').value.trim();
+  if(!nombre){ $('#f-nombre').focus(); return; }
+  const data={nombre,tipo:chipValue('f-tipo')||'Constructora',contacto:$('#f-contacto').value.trim(),tel:$('#f-tel').value.trim()};
+  if(id){ Object.assign(DB.clientes.find(c=>c.id===id),data); toast('Cliente actualizado'); }
+  else{ DB.clientes.push({id:uid(),...data}); toast('Cliente creado'); }
+  save(); closeModal(); render();
+}
+function delCliente(id){
+  const n=DB.obras.filter(o=>o.clienteId===id).length;
+  confirmModal('¿Borrar este cliente?', n?`Tiene ${n} obra(s) asociada(s) que quedarán sin cliente.`:'Esta acción no se puede deshacer.',()=>{
+    DB.clientes=DB.clientes.filter(c=>c.id!==id);
+    DB.obras.forEach(o=>{ if(o.clienteId===id) o.clienteId=null; });
+    save(); closeModal(); render(); toast('Cliente borrado');
+  });
+}
+let _obrasClienteFilter=null;
+function setViewObrasDe(id){ _obrasClienteFilter=id; setView('obras'); }
+
+/* ============================================================
+   OBRAS
+   ============================================================ */
+const ESTADOS=['Presupuesto','Confirmada','En ejecución','Pausada','Finalizada'];
+function estadoClass(e){return {'Presupuesto':'presupuesto','Confirmada':'confirmada','En ejecución':'ejecucion','Pausada':'pausada','Finalizada':'finalizada'}[e]||'presupuesto';}
+
+function renderObras(el){
+  let obras=DB.obras;
+  let filterBanner='';
+  if(_obrasClienteFilter){
+    obras=obras.filter(o=>o.clienteId===_obrasClienteFilter);
+    filterBanner=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;font-size:13.5px;color:var(--ink-soft)">
+      Mostrando obras de <b style="color:var(--ink)">${esc(clienteName(_obrasClienteFilter))}</b>
+      <button class="btn btn-ghost btn-sm" onclick="_obrasClienteFilter=null;render()">Ver todas</button></div>`;
+  }
+  if(!DB.obras.length){
+    el.innerHTML=emptyState('obras','Sin obras cargadas','Creá tu primera obra: cargás el cliente, la dirección y el estado. Adentro vas a tener pendientes, planos, materiales/faltantes y extras a cobrar.','Cargar primera obra','openObraForm');
+    return;
+  }
+  el.innerHTML=filterBanner+`<div class="grid cards">${obras.map(o=>{
+    const pend=(o.pendientes||[]).filter(p=>!p.done).length;
+    const falta=(o.materiales||[]).filter(m=>m.estado!=='OK').length;
+    const extras=(o.extras||[]).filter(x=>!x.cobrado).reduce((s,x)=>s+(Number(x.monto)||0),0);
+    return `<div class="card obra-card">
+      <div class="obra-head" onclick="openObra('${o.id}')">
+        <div style="flex:1;min-width:0">
+          <div class="obra-code">${obraCode(o)}</div>
+          <div class="obra-name">${esc(o.nombre)}</div>
+          <div class="obra-cli">${ICO.pin}${esc(clienteName(o.clienteId))}</div>
+        </div>
+        <span class="estado ${estadoClass(o.estado)}">${esc(o.estado)}</span>
+      </div>
+      <div class="obra-stats">
+        <div class="obra-stat"><div class="n ${pend?'alert':''}">${pend}</div><div class="l">Pendientes</div></div>
+        <div class="obra-stat"><div class="n ${falta?'alert':''}">${falta}</div><div class="l">Faltantes</div></div>
+        ${isSocio()?`<div class="obra-stat"><div class="n ${extras?'money':''}">${extras?money(extras):'—'}</div><div class="l">Extras s/cobrar</div></div>`:``}
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+function openObraForm(id,prefill){
+  prefill=prefill||{};
+  const noClientes=DB.clientes.length===0;
+  const base=id?DB.obras.find(x=>x.id===id):{};
+  const o={
+    nombre: prefill.nombre ?? base.nombre ?? '',
+    clienteId: prefill.clienteId ?? base.clienteId ?? _obrasClienteFilter ?? (DB.clientes[0]?DB.clientes[0].id:null),
+    estado: prefill.estado ?? base.estado ?? 'Confirmada',
+    notas: prefill.notas ?? base.notas ?? '',
+  };
+  modal(`
+    <div class="modal-head"><div><h2>${id?'Editar obra':'Nueva obra'}</h2></div>
+      <button class="btn-icon" onclick="closeModal()">${ICO.x}</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nombre / dirección de la obra</label>
+        <input id="f-nombre" value="${esc(o.nombre||'')}" placeholder="Ej: Casa Los Álamos 340"></div>
+      <div class="field"><label>Cliente</label>
+        ${noClientes
+          ? `<div style="font-size:13px;color:var(--ink-soft);background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:16px;text-align:center">
+               Todavía no cargaste clientes.
+               <div style="margin-top:10px"><button class="btn btn-primary btn-sm" type="button" onclick="nuevoClienteEnObra('${id||''}')">${ICO.plus} Crear cliente</button></div>
+             </div>`
+          : `<div style="display:flex;gap:8px">
+               <select id="f-cliente" style="flex:1">${DB.clientes.map(c=>`<option value="${c.id}" ${o.clienteId===c.id?'selected':''}>${esc(c.nombre)}</option>`).join('')}</select>
+               <button class="btn btn-ghost" type="button" style="white-space:nowrap" onclick="nuevoClienteEnObra('${id||''}')" title="Crear un cliente nuevo y usarlo acá">${ICO.plus} Nuevo</button>
+             </div>`}
+      </div>
+      <div class="field"><label>Estado</label>
+        <select id="f-estado">${ESTADOS.map(e=>`<option ${o.estado===e?'selected':''}>${e}</option>`).join('')}</select></div>
+      <div class="field"><label>Notas <span class="opt">(opcional)</span></label>
+        <textarea id="f-notas" placeholder="Tipo de instalación, cantidad de bocas, particularidades...">${esc(o.notas||'')}</textarea></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveObra('${id||''}')" ${noClientes?'disabled style="opacity:.5;cursor:not-allowed"':''}>${id?'Guardar':'Crear obra'}</button>
+    </div>`);
+}
+/* Crear un cliente sin salir del formulario de obra, conservando lo tipeado */
+function nuevoClienteEnObra(id){
+  const prefill={
+    nombre: $('#f-nombre')?$('#f-nombre').value:undefined,
+    estado: $('#f-estado')?$('#f-estado').value:undefined,
+    notas:  $('#f-notas') ?$('#f-notas').value :undefined,
+  };
+  quickClienteForm(newCliId=>{ openObraForm(id||'', {...prefill, clienteId:newCliId}); });
+}
+function saveObra(id){
+  const sel=$('#f-cliente'); if(!sel){ toast('Creá un cliente primero'); return; }
+  const nombre=$('#f-nombre').value.trim();
+  if(!nombre){ $('#f-nombre').focus(); return; }
+  const data={nombre,clienteId:sel.value,estado:$('#f-estado').value,notas:$('#f-notas').value.trim()};
+  if(id){ Object.assign(DB.obras.find(o=>o.id===id),data); toast('Obra actualizada'); }
+  else{ DB.obras.push({id:uid(),...data,pendientes:[],planos:[],materiales:[],extras:[]}); toast('Obra creada'); }
+  save(); closeModal(); render();
+}
+function delObra(id){
+  confirmModal('¿Borrar esta obra?','Se borran también sus pendientes, planos, materiales y extras.',async()=>{
+    const o=DB.obras.find(x=>x.id===id);
+    if(o) for(const p of (o.planos||[])) if(p.fileId){ try{ await store.delete('voltum:file:'+p.fileId); }catch(e){} }
+    DB.obras=DB.obras.filter(o=>o.id!==id);
+    DB.calendario=DB.calendario.filter(a=>a.obraId!==id);
+    openObraId=null; save(); closeModal(); setView('obras'); toast('Obra borrada');
+  });
+}
+function openObra(id){ openObraId=id; openObraTab='pendientes'; render(); }
+
+/* ---------- OBRA DETAIL ---------- */
+function renderObraDetail(el){
+  const o=DB.obras.find(x=>x.id===openObraId);
+  if(!o){ openObraId=null; return render(); }
+  o.pendientes??=[];o.planos??=[];o.materiales??=[];o.extras??=[];o.observaciones??=[];
+  const pend=o.pendientes.filter(p=>!p.done).length;
+  const falta=o.materiales.filter(m=>m.estado!=='OK').length;
+  $('#view-title').textContent=o.nombre;
+  $('#view-desc').textContent=obraCode(o)+' · '+clienteName(o.clienteId);
+  $('#main-action-label').textContent='Editar obra';
+
+  el.innerHTML=`
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:20px">
+      <button class="btn btn-ghost btn-sm" onclick="openObraId=null;setView('obras')">${ICO.back} Volver a obras</button>
+      <span class="estado ${estadoClass(o.estado)}" style="cursor:pointer" onclick="cycleEstado('${o.id}')" title="Clic para cambiar estado">${esc(o.estado)}</span>
+      <div class="row-actions">
+        <button class="btn-icon" onclick="openObraForm('${o.id}')" title="Editar obra">${ICO.edit}</button>
+        <button class="btn-icon danger" onclick="delObra('${o.id}')" title="Borrar obra">${ICO.trash}</button>
+      </div>
+    </div>
+    ${o.notas?`<div class="card" style="padding:14px 16px;margin-bottom:18px;font-size:13.5px;color:var(--ink-soft);border-left:3px solid var(--volt)">${esc(o.notas)}</div>`:''}
+    <div class="card" style="overflow:visible">
+      <div class="detail-tabs">
+        ${tabBtn('pendientes','Pendientes',pend,pend>0)}
+        ${tabBtn('planos','Planos',o.planos.length,false)}
+        ${isSocio()?tabBtn('materiales','Faltantes',falta,falta>0):''}
+        ${tabBtn('extras',isSocio()?'Extras':'Extras realizados',o.extras.length,false)}
+        ${tabBtn('observaciones','Observaciones',(o.observaciones||[]).length,false)}
+      </div>
+      <div class="modal-body" style="max-height:none;padding:22px 24px" id="tab-content"></div>
+    </div>`;
+  renderObraTab(o);
+}
+function tabBtn(id,label,n,alert){
+  return `<button class="detail-tab ${openObraTab===id?'active':''}" onclick="openObraTab='${id}';renderObraTab(DB.obras.find(o=>o.id==='${openObraId}'))">
+    ${label}<span class="badge ${alert?'alert':''}">${n}</span></button>`;
+}
+function cycleEstado(id){
+  const o=DB.obras.find(x=>x.id===id);
+  o.estado=ESTADOS[(ESTADOS.indexOf(o.estado)+1)%ESTADOS.length];
+  save(); render();
+}
+function renderObraTab(o){
+  const c=$('#tab-content');
+  document.querySelectorAll('.detail-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.detail-tab').forEach(t=>{
+    if(t.getAttribute('onclick') && t.getAttribute('onclick').includes("'"+openObraTab+"'")){
+      t.classList.add('active');
+    }
+  });
+  if(openObraTab==='pendientes') renderPendientes(c,o);
+  else if(openObraTab==='planos') renderPlanos(c,o);
+  else if(openObraTab==='materiales' && isSocio()) renderMateriales(c,o);
+  else if(openObraTab==='materiales' && !isSocio()){ c.innerHTML='<div style="padding:40px;text-align:center;color:var(--ink-faint);font-size:13px">Solo disponible para administradores.</div>'; return; }
+  else if(openObraTab==='extras') renderExtrasForRole(c,o);
+  else if(openObraTab==='observaciones') renderObservaciones(c,o);
+}
+
+/* --- PENDIENTES --- */
+function renderPendientes(c,o){
+  c.innerHTML=`
+    ${o.pendientes.length?o.pendientes.map(p=>`
+      <div class="list-item">
+        <div class="check ${p.done?'done':''}" onclick="togglePend('${o.id}','${p.id}')">${ICO.checkSm}</div>
+        <div class="li-text ${p.done?'done':''}">${esc(p.texto)}</div>
+        <button class="btn-icon danger" onclick="delPend('${o.id}','${p.id}')">${ICO.trash}</button>
+      </div>`).join(''):`<div class="inline-empty">No hay pendientes. Sumá lo que falta hacer en esta obra 👇</div>`}
+    <div class="quick-add">
+      <input id="qa-pend" placeholder="Ej: Cablear planta alta, colocar tablero..." onkeydown="if(event.key==='Enter')addPend('${o.id}')">
+      <button class="btn btn-primary" onclick="addPend('${o.id}')">Agregar</button>
+    </div>`;
+}
+function addPend(id){
+  const inp=$('#qa-pend'), t=inp.value.trim(); if(!t)return;
+  const o=DB.obras.find(x=>x.id===id); o.pendientes.push({id:uid(),texto:t,done:false});
+  save(); renderObraTab(o); refreshTabBadges(o);
+}
+function togglePend(oid,pid){ const o=DB.obras.find(x=>x.id===oid);const p=o.pendientes.find(p=>p.id===pid);p.done=!p.done;save();renderObraTab(o);refreshTabBadges(o);}
+function delPend(oid,pid){ const o=DB.obras.find(x=>x.id===oid);o.pendientes=o.pendientes.filter(p=>p.id!==pid);save();renderObraTab(o);refreshTabBadges(o);}
+
+/* --- PLANOS Y ARCHIVOS --- */
+function renderPlanos(c,o){
+  c.innerHTML=`
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">Subí el PDF, plano o foto directo (queda guardado, hasta ~3.5MB), o pegá el link a Drive para archivos grandes.</p>
+    ${o.planos.length?o.planos.map(p=>{
+      const sub=[];
+      if(p.fileId) sub.push(`${esc(p.fileName||'archivo')} · ${fmtSize(p.fileSize||0)}`);
+      if(p.nota) sub.push(esc(p.nota));
+      const title = (p.url && !p.fileId)
+        ? `<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.nombre)}</a>`
+        : `<span style="font-weight:600;font-size:14px">${esc(p.nombre)}</span>`;
+      return `<div class="plano-item">
+        <div class="plano-ico" style="${p.fileId?'background:#E4F8F3;color:#0E8C74':''}">${ICO.file}</div>
+        <div style="flex:1;min-width:0">
+          ${title}
+          ${sub.length?`<div class="li-sub">${sub.join(' · ')}</div>`:''}
+          ${(p.fileId&&p.url)?`<a href="${esc(p.url)}" target="_blank" rel="noopener" style="font-size:12px;color:var(--info)">Ver link externo</a>`:''}
+        </div>
+        ${p.fileId?`<button class="btn btn-ghost btn-sm" onclick="openFile('${p.fileId}')">${ICO.open} Abrir</button>`:''}
+        <button class="btn-icon danger" onclick="delPlano('${o.id}','${p.id}')">${ICO.trash}</button>
+      </div>`;
+    }).join(''):`<div class="inline-empty">Sin planos ni archivos cargados todavía.</div>`}
+    <button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="planoForm('${o.id}')">${ICO.plus} Agregar plano o archivo</button>`;
+}
+function planoForm(oid){
+  _pendingFiles=[];
+  modal(`
+    <div class="modal-head"><h2>Agregar planos o archivos</h2><button class="btn-icon" onclick="closeModal()">${ICO.x}</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Archivos <span class="opt">(PDF, imagen, doc — podés elegir varios a la vez, hasta ~3.5MB c/u)</span></label>
+        <input type="file" id="p-file" multiple accept=".pdf,image/*,.doc,.docx,.xls,.xlsx,.dwg" style="display:none" onchange="pickFile(this)">
+        <button type="button" class="btn btn-ghost" style="width:100%;justify-content:center" onclick="document.getElementById('p-file').click()">${ICO.upload} Elegir archivo(s)</button>
+        <div id="p-file-info" style="font-size:12.5px;margin-top:8px;display:flex;flex-direction:column;gap:3px"></div>
+      </div>
+      <div style="text-align:center;font-size:11px;color:var(--ink-faint);letter-spacing:1px;margin:4px 0 12px">— O UN LINK —</div>
+      <div class="field"><label>Link <span class="opt">(Drive, WhatsApp, etc.)</span></label><input id="p-url" placeholder="https://..."></div>
+      <div class="field"><label>Nombre <span class="opt">(si subís 1 archivo o un link)</span></label><input id="p-nombre" placeholder="Ej: Plano eléctrico planta baja"></div>
+      <div class="field"><label>Nota <span class="opt">(se aplica a todos, opcional)</span></label><input id="p-nota" placeholder="Ej: versión final aprobada por el arqui"></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" id="p-save-btn" onclick="addPlano('${oid}')">Agregar</button></div>`);
+}
+function pickFile(input){
+  const info=$('#p-file-info');
+  const chosen=[...input.files];
+  if(!chosen.length){ _pendingFiles=[]; info.innerHTML=''; return; }
+  const tooBig=chosen.filter(f=>f.size>MAX_FILE);
+  _pendingFiles=chosen.filter(f=>f.size<=MAX_FILE);
+  let html=_pendingFiles.map(f=>`<div style="color:var(--live)">✓ ${esc(f.name)} · ${fmtSize(f.size)}</div>`).join('');
+  html+=tooBig.map(f=>`<div style="color:var(--danger)">⚠️ ${esc(f.name)} (${fmtSize(f.size)}) supera ${fmtSize(MAX_FILE)} — usá link a Drive</div>`).join('');
+  if(_pendingFiles.length>1) html+=`<div style="color:var(--ink-soft);margin-top:2px">Se van a agregar ${_pendingFiles.length} archivos, uno por cada plano.</div>`;
+  info.innerHTML=html;
+  if(_pendingFiles.length===1 && !$('#p-nombre').value.trim())
+    $('#p-nombre').value=_pendingFiles[0].name.replace(/\.[^.]+$/,'');
+}
+async function addPlano(oid){
+  const nombre=$('#p-nombre').value.trim();
+  const url=$('#p-url').value.trim();
+  const nota=$('#p-nota').value.trim();
+  if(!_pendingFiles.length && !nombre && !url){ $('#p-nombre').focus(); return; }
+  const o=DB.obras.find(x=>x.id===oid);
+  const btn=$('#p-save-btn');
+  if(_pendingFiles.length){
+    let done=0, failed=0;
+    const total=_pendingFiles.length;
+    for(const file of _pendingFiles){
+      if(btn){ btn.disabled=true; btn.style.opacity=.7; btn.textContent=`Guardando ${done+1} de ${total}…`; }
+      try{
+        const dataURL=await readFileAsDataURL(file);
+        const fileId=uid();
+        await store.set('voltum:file:'+fileId,dataURL);
+        const nm=(total===1 && nombre)?nombre:file.name.replace(/\.[^.]+$/,'');
+        o.planos.push({id:uid(),nombre:nm,url:(total===1?url:''),nota,fileId,fileName:file.name,fileSize:file.size,fileType:file.type});
+        done++;
+        await new Promise(r=>setTimeout(r,80)); // espaciar escrituras para no saturar el guardado
+      }catch(e){ failed++; }
+    }
+    _pendingFiles=[];
+    save(); closeModal(); renderObraTab(o); refreshTabBadges(o);
+    toast(failed?`${done} agregado(s), ${failed} no se pudieron guardar`:`${done} archivo(s) agregado(s)`);
+    return;
+  }
+  o.planos.push({id:uid(),nombre:nombre||'Plano',url,nota});
+  save(); closeModal(); renderObraTab(o); refreshTabBadges(o); toast('Plano agregado');
+}
+async function delPlano(oid,pid){
+  const o=DB.obras.find(x=>x.id===oid);
+  const p=o.planos.find(p=>p.id===pid);
+  if(p&&p.fileId){ try{ await store.delete('voltum:file:'+p.fileId); }catch(e){} }
+  o.planos=o.planos.filter(p=>p.id!==pid);
+  save();renderObraTab(o);refreshTabBadges(o);
+}
+
+/* --- MATERIALES / FALTANTES --- */
+const MAT_STATES=[['Falta','mat-falta'],['Pedido','mat-pedido'],['OK','mat-ok']];
+function matClass(s){const f=MAT_STATES.find(x=>x[0]===s);return f?f[1]:'mat-falta';}
+function renderMateriales(c,o){
+  c.innerHTML=`
+    <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px">Materiales que faltan o hay que pedir. Tocá el estado para pasarlo de <b>Falta → Pedido → OK</b>.</p>
+    ${o.materiales.length?o.materiales.map(m=>`
+      <div class="list-item">
+        <div style="flex:1"><div class="li-text">${esc(m.texto)}</div>${m.cant?`<div class="li-sub">${esc(m.cant)}</div>`:''}</div>
+        <span class="mat-state ${matClass(m.estado)}" style="cursor:pointer" onclick="cycleMat('${o.id}','${m.id}')">${esc(m.estado)}</span>
+        <button class="btn-icon danger" onclick="delMat('${o.id}','${m.id}')">${ICO.trash}</button>
+      </div>`).join(''):`<div class="inline-empty">Nada faltando por ahora 👌</div>`}
+    <div class="quick-add">
+      <input id="qa-mat" placeholder="Ej: Cable 2.5mm 100m, disyuntor..." onkeydown="if(event.key==='Enter')addMat('${o.id}')">
+      <button class="btn btn-primary" onclick="addMat('${o.id}')">Agregar</button>
+    </div>`;
+}
+function addMat(id){const inp=$('#qa-mat'),t=inp.value.trim();if(!t)return;const o=DB.obras.find(x=>x.id===id);o.materiales.push({id:uid(),texto:t,estado:'Falta'});save();renderObraTab(o);refreshTabBadges(o);}
+function cycleMat(oid,mid){const o=DB.obras.find(x=>x.id===oid);const m=o.materiales.find(m=>m.id===mid);const s=MAT_STATES.map(x=>x[0]);m.estado=s[(s.indexOf(m.estado)+1)%s.length];save();renderObraTab(o);refreshTabBadges(o);}
+function delMat(oid,mid){const o=DB.obras.find(x=>x.id===oid);o.materiales=o.materiales.filter(m=>m.id!==mid);save();renderObraTab(o);refreshTabBadges(o);}
+
+/* --- EXTRAS --- */
+function renderExtras(c,o){
+  const total=o.extras.reduce((s,x)=>s+(Number(x.monto)||0),0);
+  const sinCobrar=o.extras.filter(x=>!x.cobrado).reduce((s,x)=>s+(Number(x.monto)||0),0);
+  c.innerHTML=`
+    ${o.extras.length?`<div class="section-sum">
+      <span class="lbl">Extras sin cobrar</span><span class="val">${money(sinCobrar)}</span></div>`:''}
+    ${o.extras.length?o.extras.map(x=>`
+      <div class="list-item">
+        <div class="check ${x.cobrado?'done':''}" onclick="toggleExtra('${o.id}','${x.id}')" title="Marcar cobrado">${ICO.checkSm}</div>
+        <div style="flex:1"><div class="li-text ${x.cobrado?'done':''}">${esc(x.texto)}</div>
+          <div class="li-sub">${x.cobrado?'Cobrado':'Pendiente de cobro'}</div></div>
+        <span class="extra-amount" style="${x.cobrado?'color:var(--ink-faint)':''}">${money(x.monto)}</span>
+        <button class="btn-icon danger" onclick="delExtra('${o.id}','${x.id}')">${ICO.trash}</button>
+      </div>`).join(''):`<div class="inline-empty">Sin extras cargados. Anotá acá los trabajos adicionales a cobrar.</div>`}
+    <div class="quick-add">
+      <input id="qa-extra-t" placeholder="Ej: Punto extra en cocina" onkeydown="if(event.key==='Enter')addExtra('${o.id}')" style="flex:2">
+      <input id="qa-extra-m" placeholder="$" type="number" style="flex:1;max-width:120px" onkeydown="if(event.key==='Enter')addExtra('${o.id}')">
+      <button class="btn btn-primary" onclick="addExtra('${o.id}')">Agregar</button>
+    </div>`;
+}
+function addExtra(id){const t=$('#qa-extra-t').value.trim();if(!t){$('#qa-extra-t').focus();return;}const m=$('#qa-extra-m').value;const o=DB.obras.find(x=>x.id===id);o.extras.push({id:uid(),texto:t,monto:m,cobrado:false});save();renderObraTab(o);refreshTabBadges(o);}
+function toggleExtra(oid,xid){const o=DB.obras.find(x=>x.id===oid);const x=o.extras.find(x=>x.id===xid);x.cobrado=!x.cobrado;save();renderObraTab(o);}
+function delExtra(oid,xid){const o=DB.obras.find(x=>x.id===oid);o.extras=o.extras.filter(x=>x.id!==xid);save();renderObraTab(o);refreshTabBadges(o);}
+
+function refreshTabBadges(o){
+  const pend=o.pendientes.filter(p=>!p.done).length;
+  const falta=o.materiales.filter(m=>m.estado!=='OK').length;
+  const tabs=document.querySelectorAll('.detail-tab');
+  if(tabs[0]){tabs[0].querySelector('.badge').textContent=pend;tabs[0].querySelector('.badge').classList.toggle('alert',pend>0);}
+  if(tabs[1])tabs[1].querySelector('.badge').textContent=o.planos.length;
+  if(tabs[2]){tabs[2].querySelector('.badge').textContent=falta;tabs[2].querySelector('.badge').classList.toggle('alert',falta>0);}
+  if(tabs[3])tabs[3].querySelector('.badge').textContent=o.extras.length;
+}
+
+/* ============================================================
+   EQUIPO
+   ============================================================ */
+function renderEquipo(el){
+  if(!DB.equipo.length){
+    el.innerHTML=emptyState('equipo','Cargá tu equipo','Sumá a cada persona de Voltum con su rol. Después los vas a poder asignar a las obras en el calendario.','Sumar primera persona','openEquipoForm');
+    return;
+  }
+  el.innerHTML=`<div class="grid cards">${DB.equipo.map(m=>`
+    <div class="card eq-card">
+      <div class="eq-avatar" style="background:${teamColor(m.id)}">${esc(initials(m.nombre))}</div>
+      <div style="flex:1;min-width:0"><div class="eq-name">${esc(m.nombre)}</div><div class="eq-rol">${esc(m.rol||'Sin rol definido')}</div></div>
+      <div class="card-hover-actions">
+        <button class="btn-icon" onclick="openEquipoForm('${m.id}')">${ICO.edit}</button>
+        <button class="btn-icon danger" onclick="delEquipo('${m.id}')">${ICO.trash}</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+const ROLES=['Electricista matriculado','Ingeniero','Encargado de obra','Oficial','Ayudante','Socio','Administración'];
+function openEquipoForm(id){
+  const m=id?DB.equipo.find(x=>x.id===id):{};
+  modal(`
+    <div class="modal-head"><h2>${id?'Editar persona':'Sumar persona'}</h2><button class="btn-icon" onclick="closeModal()">${ICO.x}</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nombre</label><input id="e-nombre" value="${esc(m.nombre||'')}" placeholder="Nombre y apellido"></div>
+      <div class="field"><label>Rol</label>
+        <select id="e-rol">${ROLES.map(r=>`<option ${m.rol===r?'selected':''}>${r}</option>`).join('')}</select></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEquipo('${id||''}')">${id?'Guardar':'Sumar'}</button></div>`);
+}
+function saveEquipo(id){
+  const nombre=$('#e-nombre').value.trim();if(!nombre){$('#e-nombre').focus();return;}
+  const data={nombre,rol:$('#e-rol').value};
+  if(id)Object.assign(DB.equipo.find(m=>m.id===id),data);else DB.equipo.push({id:uid(),...data});
+  save();closeModal();render();toast('Equipo actualizado');
+}
+function delEquipo(id){
+  confirmModal('¿Quitar del equipo?','Se lo quita también de los días asignados en el calendario.',()=>{
+    DB.equipo=DB.equipo.filter(m=>m.id!==id);
+    DB.calendario.forEach(a=>a.miembros=(a.miembros||[]).filter(x=>x!==id));
+    save();closeModal();render();toast('Persona quitada');
+  });
+}
+
+/* ============================================================
+   CALENDARIO
+   ============================================================ */
+function startOfWeek(d){const x=new Date(d);const day=(x.getDay()+6)%7;x.setDate(x.getDate()-day);x.setHours(0,0,0,0);return x;}
+function fmtKey(d){return d.toISOString().slice(0,10);}
+const DAY_NAMES=['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+const MONTHS=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+
+function renderCalendario(el){
+  const todayKey=fmtKey(new Date());
+  if(!DB.obras.length){
+    el.innerHTML=emptyState('calendario','Todavía no hay obras para planificar','Podés crear la primera obra directo desde acá y programarla en el día que quieras.','Crear obra y programar',`asignForm('${todayKey}')`);
+    return;
+  }
+  const base=startOfWeek(new Date());
+  base.setDate(base.getDate()+weekOffset*7);
+  const today=fmtKey(new Date());
+  const end=new Date(base);end.setDate(end.getDate()+6);
+  const label=`${base.getDate()} ${MONTHS[base.getMonth()].slice(0,3)} – ${end.getDate()} ${MONTHS[end.getMonth()].slice(0,3)} ${end.getFullYear()}`;
+
+  // Armar los 7 días de la semana
+  const allDays=DAY_NAMES.map((dn,i)=>{
+    const d=new Date(base);d.setDate(d.getDate()+i);
+    return {dn,i,d,key:fmtKey(d)};
+  });
+  // En la semana actual, ocultar los días previos a hoy salvo que se pidan ver
+  const isCurrentWeek=(weekOffset===0);
+  let days=allDays, hiddenPast=0;
+  if(isCurrentWeek && !_showPast){
+    days=allDays.filter(x=>x.key>=today);
+    hiddenPast=allDays.length-days.length;
+  }
+  if(!days.length) days=allDays; // por si acaso, nunca vacío
+
+  el.innerHTML=`
+    <div class="cal-nav">
+      <button class="btn-icon" style="background:var(--card);border:1px solid var(--line)" onclick="weekOffset--;render()" title="Semana anterior">${ICO.chevL}</button>
+      <h2>${label}</h2>
+      <button class="btn-icon" style="background:var(--card);border:1px solid var(--line)" onclick="weekOffset++;render()" title="Semana siguiente">${ICO.chevR}</button>
+      <button class="btn btn-ghost btn-sm" onclick="_showPast=false;weekOffset=0;render()">Hoy</button>
+      ${isCurrentWeek && hiddenPast>0 ? `<button class="btn btn-ghost btn-sm" onclick="_showPast=true;render()">${ICO.chevL} Días anteriores</button>` : ''}
+      ${isCurrentWeek && _showPast ? `<button class="btn btn-ghost btn-sm" onclick="_showPast=false;render()">Ocultar anteriores</button>` : ''}
+    </div>
+    ${DB.equipo.length?`<div class="team-legend">${DB.equipo.map(m=>`
+      <div class="team-pill ${_armedMember===m.id?'armed':''}" draggable="true"
+           ondragstart="dragMember(event,'${m.id}')" ondragend="dragEndMember(event)"
+           onclick="armMember('${m.id}')" title="Arrastrá sobre una obra, o tocá para sumar">
+        <span class="a-dot" style="background:${teamColor(m.id)}">${esc(initials(m.nombre))}</span>${esc(m.nombre.split(' ')[0])}</div>`).join('')}</div>`:''}
+    ${DB.equipo.length?(_armedMember
+      ? `<div class="arm-banner">Tocá las obras para sumar a <b style="margin:0 3px">${esc((DB.equipo.find(m=>m.id===_armedMember)||{}).nombre||'')}</b>
+           <button onclick="armMember('${_armedMember}')">Listo</button></div>`
+      : `<div class="cal-hint">${ICO.drag}Arrastrá una persona sobre una obra para sumarla — o tocá su nombre y después la obra.</div>`)
+    :''}
+    <div class="week" style="--cols:${days.length}">${days.map(({dn,i,d,key})=>{
+      const isToday=key===today;const weekend=i>=5;
+      const asigns=DB.calendario.filter(a=>a.fecha===key);
+      return `<div class="day ${isToday?'today':''} ${weekend?'weekend':''}">
+        <div class="day-head"><span class="day-name">${dn}</span><span class="day-num">${d.getDate()}</span></div>
+        <div class="day-body">
+          ${asigns.map(a=>{
+            const o=DB.obras.find(o=>o.id===a.obraId);
+            return `<div class="assign" ondragover="allowDrop(event)" ondragleave="dragLeaveAssign(event)" ondrop="dropMember(event,'${a.id}')" onclick="assignClick(event,'${key}','${a.id}')">
+              <div class="a-obra">${esc(o?o.nombre:'(obra borrada)')}</div>
+              ${a.tarea?`<div class="a-task">${esc(a.tarea)}</div>`:''}
+              ${(a.miembros||[]).length?`<div class="a-team">${a.miembros.map(mid=>{
+                const m=DB.equipo.find(m=>m.id===mid);return m?`<span class="a-dot" style="background:${teamColor(mid)}" title="${esc(m.nombre)}">${esc(initials(m.nombre))}</span>`:'';
+              }).join('')}</div>`:''}
+            </div>`;
+          }).join('')}
+        </div>
+      ${(DB.calendario_info||[]).filter(x=>x.fecha===key).map(info=>`
+        <div style="margin:4px 8px;padding:8px 10px;background:#FEF3C7;border-radius:8px;border-left:3px solid #F59E0B;cursor:pointer" onclick="infoForm('${key}','${info.id}')">
+          <div style="font-size:11px;font-weight:600;color:#92400E;margin-bottom:2px">INFO ${info.para&&info.para.length?'· '+info.para.map(pid=>{const m=DB.equipo.find(x=>x.id===pid);return m?m.nombre.split(' ')[0]:'';}).filter(Boolean).join(', '):''}</div>
+          <div style="font-size:12px;color:#78350F">${esc(info.texto)}</div>
+        </div>`).join('')}
+      <div style="display:flex;gap:6px;margin:4px 8px 8px">
+        <button class="day-add" onclick="asignForm('${key}')" style="flex:1;margin:0;${CURRENT_ROLE==='socio'?'':'display:none'}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg> Programar</button>
+        <button class="day-add" onclick="infoForm('${key}')" style="flex:1;margin:0"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> Info</button>
+      </div>
+      </div>`;
+    }).join('')}</div>`;
+}
+function asignForm(fecha,id,prefill){
+  if(!isSocio()){ alert("Solo los administradores pueden programar dias."); return; }
+  prefill=prefill||{};
+  const noObras=DB.obras.length===0;
+  const base=id?DB.calendario.find(x=>x.id===id):{};
+  const a={
+    obraId: prefill.obraId ?? base.obraId ?? (DB.obras[0]?DB.obras[0].id:null),
+    tarea:  prefill.tarea  ?? base.tarea  ?? '',
+    miembros: prefill.miembros ?? base.miembros ?? [],
+  };
+  const d=new Date(fecha+'T00:00:00');
+  const dateLabel=`${DAY_NAMES[(d.getDay()+6)%7]} ${d.getDate()} de ${MONTHS[d.getMonth()]}`;
+  modal(`
+    <div class="modal-head"><div><h2>${id?'Editar día':'Programar día'}</h2><div class="sub" style="text-transform:capitalize">${dateLabel}</div></div>
+      <button class="btn-icon" onclick="closeModal()">${ICO.x}</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Obra</label>
+        ${noObras
+          ? `<div style="font-size:13px;color:var(--ink-soft);background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:16px;text-align:center">
+               Todavía no cargaste obras.
+               <div style="margin-top:10px"><button class="btn btn-primary btn-sm" onclick="nuevaObraDesdeCal('${fecha}','${id||''}')">${ICO.plus} Crear obra</button></div>
+             </div>`
+          : `<div style="display:flex;flex-direction:column;gap:8px">
+               <div>
+                 <label style="font-size:11px;color:var(--ink-soft);margin-bottom:4px;display:block">Filtrar por cliente</label>
+                 <select id="a-cliente-filtro" style="width:100%" onchange="filtrarObrasPorCliente()">
+                   <option value="">— Todos los clientes —</option>
+                   ${[...new Set(DB.obras.map(o=>o.clienteId))].map(cid=>{const cl=DB.clientes.find(x=>x.id===cid);return cl?`<option value="${cid}">${esc(cl.nombre)}</option>`:''}).join('')}
+                 </select>
+               </div>
+               <div style="display:flex;gap:8px">
+                 <div style="flex:1;position:relative">
+                   <input id="a-obra-search" placeholder="Buscar obra..." autocomplete="off"
+                     style="width:100%;padding:8px 12px;border:1.5px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;color:var(--ink);background:var(--card)"
+                     oninput="filtrarObrasPorBusqueda()">
+                   <select id="a-obra" style="width:100%;margin-top:6px">
+                     ${DB.obras.map(o=>`<option value="${o.id}" ${a.obraId===o.id?'selected':''}>${esc(o.nombre)} · ${esc(clienteName(o.clienteId))}</option>`).join('')}
+                   </select>
+                 </div>
+                 <button class="btn btn-ghost" type="button" style="white-space:nowrap;align-self:flex-end" onclick="nuevaObraDesdeCal('${fecha}','${id||''}')" title="Crear una obra nueva y usarla acá">${ICO.plus} Nueva</button>
+               </div>
+             </div>`}
+      </div>
+      <div class="field"><label>Tarea del día <span class="opt">(opcional)</span></label>
+        <input id="a-tarea" value="${esc(a.tarea||'')}" placeholder="Ej: Cablear planta alta, montar tablero..."></div>
+      <div class="field"><label>¿Quién va?</label>
+        ${DB.equipo.length?`<div class="chip-select" id="a-team">${DB.equipo.map(m=>`
+          <div class="chip ${(a.miembros||[]).includes(m.id)?'on':''}" data-v="${m.id}">${esc(m.nombre)}</div>`).join('')}</div>`
+        :`<p style="font-size:13px;color:var(--ink-faint)">Cargá tu equipo primero para poder asignar personas.</p>`}</div>
+    </div>
+    <div class="modal-foot">
+      ${id?`<button class="btn btn-ghost" style="margin-right:auto;color:var(--danger)" onclick="delAsign('${id}')">Quitar</button>`:''}
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAsign('${fecha}','${id||''}')" ${noObras?'disabled style="opacity:.5;cursor:not-allowed"':''}>${id?'Guardar':'Programar'}</button>
+    </div>`);
+  if(DB.equipo.length) multiChip('a-team');
+}
+/* Crear una obra sin salir del calendario, conservando lo ya tipeado */
+function nuevaObraDesdeCal(fecha,id){
+  const tareaEl=$('#a-tarea');
+  const prefill={ tarea: tareaEl?tareaEl.value.trim():undefined, miembros: multiChipValues('a-team') };
+  quickObraForm(newObraId=>{ asignForm(fecha, id||'', {...prefill, obraId:newObraId}); });
+}
+function quickObraForm(onCreated,prefill){
+  prefill=prefill||{};
+  if(onCreated!==undefined) _quickObraCallback=onCreated; // preservar callback al re-entrar
+  const noClientes=DB.clientes.length===0;
+  modal(`
+    <div class="modal-head"><div><h2>Nueva obra</h2><div class="sub">Se crea y queda lista para programar</div></div>
+      <button class="btn-icon" onclick="closeModal()">${ICO.x}</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nombre / dirección de la obra</label><input id="q-nombre" value="${esc(prefill.nombre||'')}" placeholder="Ej: Casa Los Álamos 340"></div>
+      <div class="field"><label>Cliente</label>
+        ${noClientes
+          ? `<div style="font-size:13px;color:var(--ink-soft);background:#fbfcfe;border:1px dashed var(--line);border-radius:10px;padding:16px;text-align:center">
+               Todavía no cargaste clientes.
+               <div style="margin-top:10px"><button class="btn btn-primary btn-sm" type="button" onclick="nuevoClienteEnQuickObra()">${ICO.plus} Crear cliente</button></div>
+             </div>`
+          : `<div style="display:flex;gap:8px">
+               <select id="q-cliente" style="flex:1">${DB.clientes.map(c=>`<option value="${c.id}" ${prefill.clienteId===c.id?'selected':''}>${esc(c.nombre)}</option>`).join('')}</select>
+               <button class="btn btn-ghost" type="button" style="white-space:nowrap" onclick="nuevoClienteEnQuickObra()" title="Crear un cliente nuevo y usarlo acá">${ICO.plus} Nuevo</button>
+             </div>`}
+      </div>
+      <div class="field"><label>Estado</label>
+        <select id="q-estado">${ESTADOS.map(e=>`<option ${(prefill.estado||'Confirmada')===e?'selected':''}>${e}</option>`).join('')}</select></div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveQuickObra()" ${noClientes?'disabled style="opacity:.5;cursor:not-allowed"':''}>Crear y volver</button></div>`);
+}
+/* Crear cliente sin salir del alta rápida de obra, conservando lo tipeado */
+function nuevoClienteEnQuickObra(){
+  const prefill={ nombre: $('#q-nombre')?$('#q-nombre').value:undefined, estado: $('#q-estado')?$('#q-estado').value:undefined };
+  quickClienteForm(newCliId=>{ quickObraForm(undefined, {...prefill, clienteId:newCliId}); });
+}
+/* Alta rápida de cliente reutilizable (obra y calendario) */
+function quickClienteForm(onCreated){
+  _quickClienteCallback=onCreated;
+  modal(`
+    <div class="modal-head"><div><h2>Nuevo cliente</h2><div class="sub">Se crea y queda listo para asignarlo</div></div>
+      <button class="btn-icon" onclick="closeModal()">${ICO.x}</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nombre del cliente</label><input id="qc-nombre" placeholder="Ej: Constructora del Sur"></div>
+      <div class="field"><label>Tipo de cliente</label>
+        <div class="chip-select" id="qc-tipo">${TIPOS.map(t=>`<div class="chip ${t[0]==='Constructora'?'on':''}" data-v="${t[0]}">${t[0]}</div>`).join('')}</div></div>
+      <div class="field-row">
+        <div class="field"><label>Contacto <span class="opt">(opcional)</span></label><input id="qc-contacto" placeholder="Ej: Arq. Martínez"></div>
+        <div class="field"><label>Teléfono <span class="opt">(opcional)</span></label><input id="qc-tel" placeholder="351..."></div>
+      </div>
+    </div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveQuickCliente()">Crear y volver</button></div>`);
+  chipSelect('qc-tipo');
+}
+function saveQuickCliente(){
+  const nombre=$('#qc-nombre').value.trim(); if(!nombre){$('#qc-nombre').focus();return;}
+  const cli={id:uid(),nombre,tipo:chipValue('qc-tipo')||'Constructora',contacto:$('#qc-contacto').value.trim(),tel:$('#qc-tel').value.trim()};
+  DB.clientes.push(cli); save();
+  const cb=_quickClienteCallback; _quickClienteCallback=null;
+  toast('Cliente creado');
+  if(cb) cb(cli.id); else { closeModal(); render(); }
+}
+function saveQuickObra(){
+  const sel=$('#q-cliente'); if(!sel){ toast('Creá un cliente primero'); return; }
+  const nombre=$('#q-nombre').value.trim(); if(!nombre){$('#q-nombre').focus();return;}
+  const obra={id:uid(),nombre,clienteId:sel.value,estado:$('#q-estado').value,notas:'',pendientes:[],planos:[],materiales:[],extras:[]};
+  DB.obras.push(obra); save();
+  const cb=_quickObraCallback; _quickObraCallback=null;
+  toast('Obra creada');
+  if(cb) cb(obra.id); else { closeModal(); render(); }
+}
+function saveAsign(fecha,id){
+  const sel=$('#a-obra'); if(!sel){ toast('Creá una obra primero'); return; }
+  const data={fecha,obraId:sel.value,tarea:$('#a-tarea').value.trim(),miembros:multiChipValues('a-team')};
+  if(id)Object.assign(DB.calendario.find(a=>a.id===id),data);
+  else DB.calendario.push({id:uid(),...data});
+  save();closeModal();render();toast('Día programado');
+}
+function delAsign(id){DB.calendario=DB.calendario.filter(a=>a.id!==id);save();closeModal();render();toast('Programación quitada');}
+
+/* --- Asignar personas por arrastre o por toque --- */
+function addMemberToAssign(assignId,memberId){
+  const a=DB.calendario.find(x=>x.id===assignId); if(!a) return;
+  a.miembros=a.miembros||[];
+  const m=DB.equipo.find(m=>m.id===memberId);
+  if(a.miembros.includes(memberId)){ toast(`${m?m.nombre.split(' ')[0]:'Esa persona'} ya estaba en esa obra`); return; }
+  a.miembros.push(memberId); save(); render();
+  toast(`${m?m.nombre.split(' ')[0]:'Persona'} sumada a la obra`);
+}
+/* arrastre (desktop) */
+function dragMember(e,id){ _dragMemberId=id; e.dataTransfer.setData('text/plain',id); e.dataTransfer.effectAllowed='copy'; document.body.classList.add('dragging'); }
+function dragEndMember(){ document.body.classList.remove('dragging'); document.querySelectorAll('.assign.drop-hover').forEach(x=>x.classList.remove('drop-hover')); }
+function allowDrop(e){ e.preventDefault(); e.dataTransfer.dropEffect='copy'; e.currentTarget.classList.add('drop-hover'); }
+function dragLeaveAssign(e){ e.currentTarget.classList.remove('drop-hover'); }
+function dropMember(e,assignId){
+  e.preventDefault(); e.stopPropagation();
+  e.currentTarget.classList.remove('drop-hover');
+  document.body.classList.remove('dragging');
+  const id=_dragMemberId||e.dataTransfer.getData('text/plain'); _dragMemberId=null;
+  if(id) addMemberToAssign(assignId,id);
+}
+/* modo tocar (móvil): armar una persona y tocar obras */
+function armMember(id){ _armedMember=(id && _armedMember!==id)?id:null; render(); }
+function assignClick(e,key,assignId){
+  if(_armedMember){ addMemberToAssign(assignId,_armedMember); return; }
+  if(isSocio()) if(isSocio()) asignForm(key,assignId);
+}
+
+/* ============================================================
+   SHARED UI HELPERS
+   ============================================================ */
+function emptyState(icon,title,text,btn,fn){
+  const icons={obras:ICO.building,clientes:ICO.users,calendario:ICO.cal,equipo:ICO.users};
+  return `<div class="empty">
+    ${icons[icon]||ICO.building}
+    <h3>${title}</h3><p>${text}</p>
+    <button class="btn btn-primary" onclick="${fn.includes('(')?fn:fn+'()'}">${ICO.plus} ${btn}</button>
+  </div>`;
+}
+function confirmModal(title,text,onYes,yesLabel){
+  modal(`<div class="modal-head"><h2>${esc(title)}</h2></div>
+    <div class="modal-body"><p style="font-size:14px;color:var(--ink-soft);line-height:1.5">${esc(text)}</p></div>
+    <div class="modal-foot"><button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+    <button class="btn btn-primary" id="confirm-yes">${yesLabel||'Sí, borrar'}</button></div>`,false);
+  $('#confirm-yes').onclick=onYes;
+}
+/* single-choice chips */
+function chipSelect(id){const box=document.getElementById(id);box.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{box.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));ch.classList.add('on');});}
+function chipValue(id){const on=document.getElementById(id).querySelector('.chip.on');return on?on.dataset.v:'';}
+/* multi-choice chips */
+function multiChip(id){const box=document.getElementById(id);if(!box)return;box.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>ch.classList.toggle('on'));}
+function multiChipValues(id){const box=document.getElementById(id);if(!box)return[];return[...box.querySelectorAll('.chip.on')].map(c=>c.dataset.v);}
+
+/* main action button */
+$('#main-action').onclick=()=>{
+  if(openObraId){ if(isSocio()) openObraForm(openObraId); return; }
+  if(currentView==='obras' && isSocio()) openObraForm();
+  else if(currentView==='clientes' && isSocio()) openClienteForm();
+  else if(currentView==='equipo') openEquipoForm();
+  else if(currentView==='calendario' && isSocio()){ const t=fmtKey(new Date()); asignForm(t); }
+};
+document.querySelectorAll('.nav-btn').forEach(b=>b.onclick=()=>{_obrasClienteFilter=null;setView(b.dataset.view);});
+
+/* ---------- ICONS ---------- */
+const ICO={
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 6L6 18M6 6l12 12"/></svg>',
+  edit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>',
+  trash:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>',
+  phone:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>',
+  user:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"/></svg>',
+  users:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>',
+  file:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>',
+  building:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M5 21V7l7-4 7 4v14M9 9h.01M9 13h.01M9 17h.01M15 9h.01M15 13h.01M15 17h.01"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>',
+  chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M15 18l-6-6 6-6"/></svg>',
+  chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M9 18l6-6-6-6"/></svg>',
+  checkSm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5"><path d="M20 6L9 17l-5-5"/></svg>',
+  upload:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>',
+  open:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>',
+  save:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>',
+  download:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
+  drag:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></svg>',
+};
+
+/* ============================================================
+   BACKUP / RESTAURAR
+   ============================================================ */
+async function exportData(){
+  toast('Preparando backup…');
+  const files={};
+  for(const o of DB.obras) for(const p of (o.planos||[])) if(p.fileId){
+    try{ const r=await store.get('voltum:file:'+p.fileId); if(r&&r.value) files[p.fileId]=r.value; }catch(e){}
+  }
+  const backup={_app:'voltum-central-obras',_version:2,_fecha:new Date().toISOString(),data:DB,files};
+  const blob=new Blob([JSON.stringify(backup)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url; a.download=`voltum-backup-${fmtKey(new Date())}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),2000);
+  toast('Backup descargado');
+}
+function importData(input){
+  const f=input.files[0]; if(!f) return;
+  const reader=new FileReader();
+  reader.onload=async()=>{
+    let backup;
+    try{ backup=JSON.parse(reader.result); }
+    catch(e){ toast('El archivo no es un backup válido'); input.value=''; return; }
+    if(!backup || !backup.data){ toast('El archivo no es un backup de Voltum'); input.value=''; return; }
+    const nC=(backup.data.clientes||[]).length, nO=(backup.data.obras||[]).length;
+    confirmModal('¿Restaurar este backup?',
+      `Se van a cargar ${nC} cliente(s) y ${nO} obra(s) del archivo, reemplazando lo que tengas ahora. Si querés conservar lo actual, hacé un Backup antes.`,
+      async()=>{
+        try{
+          DB=backup.data;
+          DB.clientes??=[];DB.obras??=[];DB.equipo??=[];DB.calendario??=[];
+          if(backup.files) for(const fid in backup.files){ try{ await store.set('voltum:file:'+fid,backup.files[fid]); }catch(e){} }
+          await store.set(STORAGE_KEY,JSON.stringify(DB));
+          closeModal(); _obrasClienteFilter=null; openObraId=null; setView('obras'); toast('Backup restaurado');
+        }catch(e){ toast('No se pudo restaurar'); }
+        input.value='';
+      },'Sí, restaurar');
+  };
+  reader.readAsText(f);
+}
+
+/* ---------- estado de conexión ---------- */
+function paintCloudStatus(){
+  const el=$('#cloud-status'); if(!el) return;
+  if(USING_CLOUD){
+    el.innerHTML=`<span style="width:8px;height:8px;border-radius:50%;background:var(--live);box-shadow:0 0 0 3px rgba(18,194,160,.2)"></span><span style="color:#8fb8ad">Nube conectada · sincroniza</span>`;
+  }else{
+    el.innerHTML=`<span style="width:8px;height:8px;border-radius:50%;background:#8595b2"></span><span style="color:#8595b2">Solo este dispositivo</span>`;
+  }
+}
+
+/* ---------- migración: datos de Claude → nube ---------- */
+function _dbVacia(d){ return !(d.clientes||[]).length && !(d.obras||[]).length && !(d.equipo||[]).length && !(d.calendario||[]).length; }
+async function checkMigration(){
+  if(!USING_CLOUD || !window.storage) return;      // (no aplica con este esquema)
+  if(!_dbVacia(DB)) return;                   // la nube ya tiene datos: nada que migrar
+  try{
+    const r=await window.storage.get(STORAGE_KEY);
+    if(r && r.value){
+      const local=JSON.parse(r.value);
+      if(!_dbVacia(local)){ _migrationRaw=r.value; _migrationData=local; migrationPrompt(local); }
+    }
+  }catch(e){ /* sin datos previos */ }
+}
+function migrationPrompt(local){
+  const nC=(local.clientes||[]).length, nO=(local.obras||[]).length;
+  modal(`
+    <div class="modal-head"><div><h2>Encontramos tus datos guardados</h2><div class="sub">Todavía no están en la nube nueva</div></div></div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:var(--ink-soft);line-height:1.6">Tenés <b>${nC} cliente${nC!==1?'s':''}</b> y <b>${nO} obra${nO!==1?'s':''}</b> guardados que todavía no se subieron a tu Supabase. ¿Los pasamos ahora a la nube? No se pierde nada de lo que ya tenés.</p>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost" onclick="closeModal()">Ahora no</button>
+      <button class="btn btn-primary" id="mig-btn" onclick="doMigration()">Sí, subir a la nube</button>
+    </div>`);
+}
+async function doMigration(){
+  const btn=$('#mig-btn'); if(btn){btn.disabled=true;btn.textContent='Subiendo…';btn.style.opacity=.7;}
+  try{
+    await store.set(STORAGE_KEY, _migrationRaw);                 // datos principales
+    for(const o of (_migrationData.obras||[]))                    // archivos de planos
+      for(const p of (o.planos||[])) if(p.fileId){
+        try{ const fr=await window.storage.get('voltum:file:'+p.fileId); if(fr&&fr.value) await store.set('voltum:file:'+p.fileId, fr.value); }catch(e){}
+      }
+    _lastRaw=null; await load(); closeModal(); render(); paintCloudStatus();
+    toast('Datos subidos a la nube ✓');
+  }catch(e){
+    if(btn){btn.disabled=false;btn.textContent='Sí, subir a la nube';btn.style.opacity=1;}
+    toast('No se pudo subir. Revisá la conexión e intentá de nuevo.');
+  }
+}
+
+
+
+function renderExtrasForRole(c,o){
+  if(isSocio()){
+    renderExtras(c,o);
+    return;
+  }
+  // Empleado: can add extras (without price) but can't see amounts or cobrado status
+  c.innerHTML=`
+    <div style="padding:12px 0 16px;font-size:13px;color:var(--ink-soft)">
+      Podés cargar extras realizados. Los valores los completan los socios.
+    </div>
+    ${o.extras.length?o.extras.map(x=>`
+      <div class="list-item">
+        <div style="flex:1"><div class="li-text">${x.texto}</div>
+          <div class="li-sub">Extra registrado</div></div>
+      </div>`).join(''):`<div class="inline-empty">Sin extras cargados.</div>`}
+    <div class="quick-add">
+      <input id="qa-extra-t" placeholder="Describí el extra realizado..." onkeydown="if(event.key==='Enter')addExtraEmpleado('${o.id}')" style="flex:2">
+      <button class="btn btn-primary" onclick="addExtraEmpleado('${o.id}')">Cargar</button>
+    </div>`;
+}
+
+function addExtraEmpleado(obraId){
+  const t=document.getElementById('qa-extra-t');
+  const texto=t.value.trim();
+  if(!texto){alert('Describí el extra.');return;}
+  const o=DB.obras.find(x=>x.id===obraId);
+  if(!o)return;
+  o.extras??=[];
+  o.extras.push({id:uid(),texto,monto:0,cobrado:false,cargadoPor:'empleado',creadoEn:Date.now()});
+  t.value='';
+  save().then(()=>renderObraTab(o));
+}
+
+/* --- OBSERVACIONES --- */
+
+function renderObsLista(o, tipos, tipoColor){
+  if(!o.observaciones || !o.observaciones.length) return '';
+  return [...o.observaciones].sort(function(a,b){return b.fecha.localeCompare(a.fecha);}).map(function(ob){
+    var color = tipoColor[ob.tipo] || '#8A94A8';
+    var tipoLabel = tipos[ob.tipo] || ob.tipo;
+    var autorSpan = ob.autor ? '<span style="font-size:11px;color:var(--ink-soft)">· '+ob.autor+'</span>' : '';
+    return '<div style="padding:14px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;border-left:3px solid '+color+'">'+
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">'+
+        '<div style="display:flex;align-items:center;gap:8px">'+
+          '<span style="font-size:11px;font-weight:600;color:'+color+';text-transform:uppercase;letter-spacing:.05em">'+tipoLabel+'</span>'+
+          '<span style="font-size:11px;color:var(--ink-faint)">'+fmtFecha(ob.fecha)+'</span>'+
+          autorSpan+
+        '</div>'+
+        '<button onclick="delObservacion(''+o.id+'',''+ob.id+'')" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:0 4px" title="Eliminar">×</button>'+
+      '</div>'+
+      '<div style="font-size:13px;color:var(--ink);line-height:1.5;white-space:pre-wrap">'+ob.texto+'</div>'+
+    '</div>';
+  }).join('');
+}
+
+function renderObservaciones(c,o){
+  o.observaciones??=[];
+  const tipos={visita:'Visita',avance:'Avance',problema:'Problema',reunion:'Reunión',otro:'Otro',informacion:'Información'};
+  const tipoColor={visita:'#3B82F6',avance:'#12E56B',problema:'#E5484D',reunion:'#F59E0B',otro:'#8A94A8',informacion:'#8B5CF6'};
+  c.innerHTML=`
+    <div style="margin-bottom:18px">
+      <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px">Nueva observación</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+        <div>
+          <label style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Fecha</label>
+          <input type="date" id="obs-fecha" value="${new Date().toISOString().split('T')[0]}" style="width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--ink)">
+        </div>
+        <div>
+          <label style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Tipo</label>
+          <select id="obs-tipo" style="width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--ink);height:36px">
+            <option value="visita">Visita</option>
+            <option value="avance">Avance</option>
+            <option value="problema">Problema</option>
+            <option value="reunion">Reunión</option>
+            <option value="otro">Otro</option>
+            <option value="informacion">Información</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Observación</label>
+        <textarea id="obs-texto" rows="3" placeholder="Descripción detallada..." style="width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--ink);resize:vertical"></textarea>
+      </div>
+      <div style="margin-bottom:10px">
+        <label style="font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.05em;display:block;margin-bottom:4px">Autor</label>
+        <select id="obs-autor" style="width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:8px;font-size:13px;font-family:inherit;color:var(--ink);height:38px">
+          <option value="">— Seleccioná quién registra —</option>
+          ${DB.equipo.map(function(m){return '<option value="'+m.nombre+'">'+m.nombre+'</option>';}).join('')}
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="addObservacion('${o.id}')" style="width:100%">+ Agregar observación</button>
+    </div>
+    <div style="border-top:1px solid var(--line);padding-top:16px">
+      ${o.observaciones.length===0?`<div style="text-align:center;padding:32px;color:var(--ink-faint);font-size:13px">Sin observaciones registradas</div>`:''}
+      ${renderObsLista(o, tipos, tipoColor)}
+    </div>`;
+}
+
+function addObservacion(obraId){
+  const fecha=document.getElementById('obs-fecha').value;
+  const tipo=document.getElementById('obs-tipo').value;
+  const texto=document.getElementById('obs-texto').value.trim();
+  const autor=document.getElementById('obs-autor').value.trim();
+  if(!texto){alert('Escribí una observación.');return;}
+  const o=DB.obras.find(x=>x.id===obraId);
+  if(!o)return;
+  o.observaciones??=[];
+  o.observaciones.push({id:uid(),fecha,tipo,texto,autor,creadoEn:Date.now()});
+  save().then(()=>{
+    document.getElementById('obs-texto').value='';
+    renderObraTab(o);
+  });
+}
+
+function delObservacion(obraId,obsId){
+  if(!confirm('¿Eliminar esta observación?'))return;
+  const o=DB.obras.find(x=>x.id===obraId);
+  if(!o)return;
+  o.observaciones=(o.observaciones||[]).filter(ob=>ob.id!==obsId);
+  save().then(()=>renderObraTab(o));
+}
+
+
+/* ── AUTH / ROLES ── */
+var CURRENT_ROLE = null; // 'socio' | 'empleado'
+var LOGIN_ROLE_SEL = 'socio';
+var PASS_SOCIO = 'Voltum2001';
+var PASS_EMPLEADO = 'Voltum2026';
+
+// Tabs allowed per role
+var ROLE_TABS = {
+  socio: ['pendientes','planos','materiales','extras','observaciones'],
+  empleado: ['observaciones']  // only load extras with restricted view
+};
+
+// Nav views allowed per role  
+var ROLE_VIEWS = {
+  socio: ['obras','clientes','calendario','equipo'],
+  empleado: ['obras','clientes','calendario']
+};
+
+function selectLoginRole(role){
+  LOGIN_ROLE_SEL = role;
+  document.querySelectorAll('.login-tab').forEach((t,i)=>{
+    t.classList.toggle('active', (i===0&&role==='socio')||(i===1&&role==='empleado'));
+  });
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-err').textContent='';
+}
+
+function doLogin(){
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  if(LOGIN_ROLE_SEL==='socio' && pass===PASS_SOCIO){
+    CURRENT_ROLE='socio';
+  } else if(LOGIN_ROLE_SEL==='empleado' && pass===PASS_EMPLEADO){
+    CURRENT_ROLE='empleado';
+  } else {
+    err.textContent='Contraseña incorrecta';
+    return;
+  }
+  document.getElementById('login-screen').classList.add('hidden');
+  applyRole();
+}
+
+function applyRole(){
+  // Show/hide nav buttons based on role
+  document.querySelectorAll('.nav-btn').forEach(btn=>{
+    const view = btn.dataset.view;
+    if(view){
+      btn.style.display = ROLE_VIEWS[CURRENT_ROLE].includes(view) ? '' : 'none';
+    }
+  });
+  // Add role badge to sidebar
+  const existing = document.getElementById('role-badge');
+  if(!existing){
+    const brand = document.querySelector('.brand');
+    if(brand){
+      const badge = document.createElement('div');
+      badge.id = 'role-badge';
+      badge.className = 'role-badge ' + CURRENT_ROLE;
+      badge.title = 'Cerrar sesión';
+      badge.onclick = logout;
+      badge.innerHTML = CURRENT_ROLE==='socio' ? '● Administrador' : '● Colaborador';
+      badge.style.cssText = 'margin:0 16px 12px;display:flex;';
+      brand.after(badge);
+    }
+  }
+  // Data is already loaded from boot - just render with correct role
+  setView('obras');
+  paintCloudStatus();
+}
+
+function logout(){
+  if(!confirm('¿Cerrar sesión?'))return;
+  CURRENT_ROLE=null;
+  document.getElementById('login-screen').classList.remove('hidden');
+  document.getElementById('login-pass').value='';
+  document.getElementById('login-err').textContent='';
+  const badge = document.getElementById('role-badge');
+  if(badge) badge.remove();
+}
+
+function isSocio(){ return CURRENT_ROLE==='socio'; }
+
+
+function filtrarObrasPorCliente(){
+  const cliId = document.getElementById('a-cliente-filtro').value;
+  const search = (document.getElementById('a-obra-search')||{}).value||'';
+  const select = document.getElementById('a-obra');
+  if(!select) return;
+  const obras = DB.obras.filter(o=>{
+    const matchCli = !cliId || o.clienteId===cliId;
+    const matchSearch = !search || o.nombre.toLowerCase().includes(search.toLowerCase()) || clienteName(o.clienteId).toLowerCase().includes(search.toLowerCase());
+    return matchCli && matchSearch;
+  });
+  const current = select.value;
+  select.innerHTML = obras.map(o=>`<option value="${o.id}" ${o.id===current?'selected':''}>${esc(o.nombre)} · ${esc(clienteName(o.clienteId))}</option>`).join('');
+  if(!select.value && obras.length) select.value = obras[0].id;
+}
+
+function filtrarObrasPorBusqueda(){
+  filtrarObrasPorCliente();
+}
+
+
+/* ---------- INFORMACIÓN DE DÍA ---------- */
+function infoForm(fecha, id, prefill){
+  prefill = prefill || {};
+  const base = id ? (DB.calendario_info||[]).find(x=>x.id===id) : {};
+  const a = {
+    texto: prefill.texto ?? (base ? base.texto : '') ?? '',
+    para: prefill.para ?? (base ? base.para : []) ?? [],
+  };
+  const d = new Date(fecha+'T00:00:00');
+  const dateLabel = DAY_NAMES[(d.getDay()+6)%7]+' '+d.getDate()+' de '+MONTHS[d.getMonth()];
+  const todosPersonas = [...DB.equipo];
+  modal(`
+    <div class="modal-head">
+      <div><h2>${id?'Editar información':'Información del día'}</h2>
+        <div class="sub" style="text-transform:capitalize">${dateLabel}</div></div>
+      <button class="btn-icon" onclick="closeModal()">${ICO.x}</button>
+    </div>
+    <div class="modal-body">
+      <div class="field"><label>Mensaje / Información</label>
+        <textarea id="info-texto" rows="4" placeholder="Ej: Reunión a las 9hs, llevar materiales, día libre..." style="width:100%;padding:10px;border:1.5px solid var(--line);border-radius:8px;font-size:14px;font-family:inherit;resize:vertical">${esc(a.texto||'')}</textarea>
+      </div>
+      <div class="field"><label>Para quién <span class="opt">(opcional)</span></label>
+        ${todosPersonas.length ?
+          `<div class="chip-select" id="info-para">${todosPersonas.map(m=>
+            `<div class="chip ${(a.para||[]).includes(m.id)?'on':''}" data-v="${m.id}">${esc(m.nombre)}</div>`
+          ).join('')}</div>
+          <div style="font-size:12px;color:var(--ink-faint);margin-top:6px">Si no seleccionás a nadie, es para todos.</div>`
+          : '<p style="font-size:13px;color:var(--ink-faint)">Sin equipo cargado — el mensaje será general.</p>'
+        }
+      </div>
+    </div>
+    <div class="modal-foot">
+      ${id ? `<button class="btn btn-ghost" style="margin-right:auto;color:var(--danger)" onclick="delInfo('${id}','${fecha}')">Quitar</button>` : ''}
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveInfo('${fecha}','${id||''}')">Guardar</button>
+    </div>`);
+  if(todosPersonas.length) multiChip('info-para');
+}
+
+function saveInfo(fecha, id){
+  const texto = document.getElementById('info-texto').value.trim();
+  if(!texto){ alert('Escribí un mensaje.'); return; }
+  const paraEl = document.getElementById('info-para');
+  const para = paraEl ? [...paraEl.querySelectorAll('.chip.on')].map(c=>c.dataset.v) : [];
+  DB.calendario_info = DB.calendario_info || [];
+  if(id){
+    const existing = DB.calendario_info.find(x=>x.id===id);
+    if(existing){ existing.texto=texto; existing.para=para; existing.fecha=fecha; }
+  } else {
+    DB.calendario_info.push({id:uid(), fecha, texto, para});
+  }
+  save().then(()=>{ closeModal(); render(); });
+}
+
+function delInfo(id, fecha){
+  if(!confirm('¿Eliminar esta información?')) return;
+  DB.calendario_info = (DB.calendario_info||[]).filter(x=>x.id!==id);
+  save().then(()=>{ closeModal(); render(); });
+}
+
+/* ---------- BOOT ---------- */
+(async function(){
+  await load();
+  // Login screen is visible on top - data loads in background
+  // When user logs in, applyRole calls setView which renders with loaded data
+  paintCloudStatus();
+  await checkMigration();
+  if(USING_CLOUD){
+    // Ver cambios de otros dispositivos: al volver a la pestaña y cada 15s
+    document.addEventListener('visibilitychange',()=>{ if(!document.hidden) reloadFromCloud(); });
+    window.addEventListener('focus',reloadFromCloud);
+    setInterval(reloadFromCloud,15000);
+  }
+})();
+</script>
+
+
+</body></html>
