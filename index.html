@@ -1745,7 +1745,7 @@ function renderObsLista(o, tipos, tipoColor){
     html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
     html += '<div style="display:flex;align-items:center;gap:8px">';
     html += '<span style="font-size:11px;font-weight:600;color:' + color + ';text-transform:uppercase">' + tipoLabel + '</span>';
-    html += '<span style="font-size:11px;color:var(--ink-faint)">' + (ob.fecha?fmtFecha(ob.fecha):'') + '</span>';
+    html += '<span style="font-size:11px;color:var(--ink-faint)">' + (ob.fecha?String(ob.fecha).split('-').reverse().join('/'):'') + '</span>';
     html += autorSpan;
     html += '</div>';
     html += '<button data-oid="' + o.id + '" data-obid="' + ob.id + '" onclick="delObservacion(this.dataset.oid,this.dataset.obid)" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:0 4px">×</button>';
