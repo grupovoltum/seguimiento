@@ -1735,7 +1735,7 @@ function addExtraEmpleado(obraId){
 
 function renderObsLista(o, tipos, tipoColor){
   if(!o.observaciones || !o.observaciones.length) return '';
-  var sorted = [...o.observaciones].sort(function(a,b){return b.fecha.localeCompare(a.fecha);});
+  var sorted = [...o.observaciones].sort(function(a,b){return String(b.fecha||'').localeCompare(String(a.fecha||''));});
   var html = '';
   sorted.forEach(function(ob){
     var color = tipoColor[ob.tipo] || '#8A94A8';
@@ -1745,12 +1745,12 @@ function renderObsLista(o, tipos, tipoColor){
     html += '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">';
     html += '<div style="display:flex;align-items:center;gap:8px">';
     html += '<span style="font-size:11px;font-weight:600;color:' + color + ';text-transform:uppercase">' + tipoLabel + '</span>';
-    html += '<span style="font-size:11px;color:var(--ink-faint)">' + fmtFecha(ob.fecha) + '</span>';
+    html += '<span style="font-size:11px;color:var(--ink-faint)">' + (ob.fecha?fmtFecha(ob.fecha):'') + '</span>';
     html += autorSpan;
     html += '</div>';
     html += '<button data-oid="' + o.id + '" data-obid="' + ob.id + '" onclick="delObservacion(this.dataset.oid,this.dataset.obid)" style="background:none;border:none;cursor:pointer;color:var(--ink-faint);font-size:16px;padding:0 4px">×</button>';
     html += '</div>';
-    html += '<div style="font-size:13px;color:var(--ink);line-height:1.5;white-space:pre-wrap">' + ob.texto + '</div>';
+    html += '<div style="font-size:13px;color:var(--ink);line-height:1.5;white-space:pre-wrap">' + (ob.texto||'') + '</div>';
     html += '</div>';
   });
   return html;
