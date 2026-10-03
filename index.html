@@ -717,6 +717,10 @@ async function load(){
     _loadOk=true;          // lectura confirmada
   }catch(e){ _loadOk=false; /* no pudimos leer: NO sobrescribir la nube */ }
   DB.clientes ??= []; DB.obras ??= []; DB.equipo ??= []; DB.calendario ??= []; DB.calendario_info ??= [];
+  // Respaldo inmediato al abrir: si leímos datos buenos, guardamos copia YA (antes de que algo los pueda tocar)
+  if(_loadOk && USING_CLOUD && !_dbVacia(DB)){
+    try{ await store.set(STORAGE_KEY+':bak', JSON.stringify({_fecha:new Date().toISOString(), data:DB})); }catch(_){}
+  }
 }
 let saveTimer=null;
 async function save(){
@@ -758,7 +762,11 @@ async function reloadFromCloud(){
   try{
     const r=await store.get(STORAGE_KEY);
     if(r && r.value && r.value!==_lastRaw){
-      DB=JSON.parse(r.value); _lastRaw=r.value;
+      let incoming=null; try{ incoming=JSON.parse(r.value); }catch(_){}
+      if(!incoming) return;
+      // CANDADO: no dejar que una versión VACÍA de la nube borre datos que ya tenés cargados
+      if(_dbVacia(incoming) && !_dbVacia(DB)) return;
+      DB=incoming; _lastRaw=r.value;
       DB.clientes??=[];DB.obras??=[];DB.equipo??=[];DB.calendario??=[];
       render();
     }
