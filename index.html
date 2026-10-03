@@ -708,11 +708,14 @@ async function openFile(fileId){
 /* ---------- persistence ---------- */
 let _dirty=false;         // hay cambios locales sin confirmar en la nube
 let _lastRaw=null;         // último JSON crudo cargado (para detectar cambios remotos)
+let _loadOk=false;         // true SOLO si pudimos leer la nube sin error (aunque esté vacía)
 async function load(){
+  _loadOk=false;
   try{
     const r = await store.get(STORAGE_KEY);
     if(r && r.value){ DB = JSON.parse(r.value); _lastRaw=r.value; }
-  }catch(e){ /* primera vez: no hay datos aún */ }
+    _loadOk=true;          // lectura confirmada
+  }catch(e){ _loadOk=false; /* no pudimos leer: NO sobrescribir la nube */ }
   DB.clientes ??= []; DB.obras ??= []; DB.equipo ??= []; DB.calendario ??= []; DB.calendario_info ??= [];
 }
 let saveTimer=null;
@@ -720,7 +723,29 @@ async function save(){
   _dirty=true;
   clearTimeout(saveTimer);
   saveTimer=setTimeout(async()=>{
-    try{ const raw=JSON.stringify(DB); await store.set(STORAGE_KEY, raw); _lastRaw=raw; _dirty=false; }
+    try{
+      // ── CANDADO ANTI-PÉRDIDA ───────────────────────────────────────────
+      // Nunca dejar que un estado vacío o no confiable pise datos buenos en la nube.
+      if(USING_CLOUD && (_dbVacia(DB) || !_loadOk)){
+        let cur=null;
+        try{ cur=await store.get(STORAGE_KEY); }
+        catch(_){ toast('Sin conexión: no se guardó para proteger tus datos.'); return; }
+        if(cur && cur.value){
+          let curDB=null; try{ curDB=JSON.parse(cur.value); }catch(_){}
+          if(curDB && !_dbVacia(curDB)){
+            toast(_loadOk ? 'Protección: no se guardó un estado vacío sobre tus datos.'
+                          : 'No se guardó: no pudimos leer tus datos al abrir. Recargá la página (F5).');
+            return;   // abortar: la nube tiene datos y lo que íbamos a guardar no es confiable
+          }
+        }
+      }
+      const raw=JSON.stringify(DB);
+      await store.set(STORAGE_KEY, raw); _lastRaw=raw; _dirty=false;
+      // ── AUTO-RESPALDO: guardar siempre la última copia buena (no vacía) ──
+      if(USING_CLOUD && !_dbVacia(DB)){
+        try{ await store.set(STORAGE_KEY+':bak', JSON.stringify({_fecha:new Date().toISOString(), data:DB})); }catch(_){}
+      }
+    }
     catch(e){ toast('No se pudo guardar. Revisá tu conexión.'); }
   },150);
 }
@@ -1657,6 +1682,27 @@ function paintCloudStatus(){
 
 /* ---------- migración: datos de Claude → nube ---------- */
 function _dbVacia(d){ return !(d.clientes||[]).length && !(d.obras||[]).length && !(d.equipo||[]).length && !(d.calendario||[]).length; }
+async function checkAutoBackup(){
+  if(!USING_CLOUD || !_loadOk) return;   // solo si leímos bien y la nube está vacía
+  if(!_dbVacia(DB)) return;              // ya hay datos: nada que recuperar
+  try{
+    const r=await store.get(STORAGE_KEY+':bak');
+    if(r && r.value){
+      const bak=JSON.parse(r.value);
+      const d=(bak && bak.data) ? bak.data : null;
+      if(d && !_dbVacia(d)){
+        const nO=(d.obras||[]).length, nC=(d.clientes||[]).length;
+        if(confirm('La app está vacía, pero hay un auto-respaldo con '+nO+' obra(s) y '+nC+' cliente(s). ¿Querés restaurarlo?')){
+          DB=d; DB.clientes??=[];DB.obras??=[];DB.equipo??=[];DB.calendario??=[];DB.calendario_info??=[];
+          const raw=JSON.stringify(DB);
+          await store.set(STORAGE_KEY, raw); _lastRaw=raw;
+          if(typeof render==='function') render();
+          toast('Datos restaurados desde el auto-respaldo');
+        }
+      }
+    }
+  }catch(e){ /* sin respaldo */ }
+}
 async function checkMigration(){
   if(!USING_CLOUD || !window.storage) return;      // (no aplica con este esquema)
   if(!_dbVacia(DB)) return;                   // la nube ya tiene datos: nada que migrar
@@ -1995,6 +2041,7 @@ function delInfo(id, fecha){
   // When user logs in, applyRole calls setView which renders with loaded data
   paintCloudStatus();
   await checkMigration();
+  await checkAutoBackup();
   if(USING_CLOUD){
     // Ver cambios de otros dispositivos: al volver a la pestaña y cada 15s
     document.addEventListener('visibilitychange',()=>{ if(!document.hidden) reloadFromCloud(); });
